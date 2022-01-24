@@ -3,14 +3,14 @@ package ru.Andrianov.operations;
 import ru.Andrianov.data.Epic;
 import ru.Andrianov.data.Status;
 import ru.Andrianov.data.Subtask;
-import ru.Andrianov.data.TaskCollections;
+import ru.Andrianov.data.TaskRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EpicStatus {
 
-    public void checkEpicStatus(TaskCollections taskCollections, int epicID) {
+    public void checkEpicStatus(TaskRepository taskCollections, int epicID) {
 
         HashMap<Integer, Epic> epics = taskCollections.getEpics();
         HashMap<Integer, Subtask> subtasks = taskCollections.getSubtasks();

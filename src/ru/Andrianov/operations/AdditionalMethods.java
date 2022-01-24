@@ -2,14 +2,14 @@ package ru.Andrianov.operations;
 
 import ru.Andrianov.data.Epic;
 import ru.Andrianov.data.Subtask;
-import ru.Andrianov.data.TaskCollections;
+import ru.Andrianov.data.TaskRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AdditionalMethods {
 
-    public void getSubtaskListByEpic(TaskCollections taskCollections, int epicID) {
+    public void getSubtaskListByEpic(TaskRepository taskCollections, int epicID) {
 
         HashMap<Integer, Epic> epics = taskCollections.getEpics();
         HashMap<Integer, Subtask> subtasks = taskCollections.getSubtasks();

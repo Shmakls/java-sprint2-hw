@@ -8,9 +8,9 @@ import java.util.Scanner;
 
 public class TaskCreationAndUpdate {
 
-    Scanner scanner = new Scanner(System.in);
+    /* Scanner scanner = new Scanner(System.in);
 
-    public void createNewTask(TaskCollections taskCollections, int taskID) {
+    public void createNewTask(TaskRepository taskCollections, int taskID) {
 
         System.out.print("Введите название задачи: ");
         String title = scanner.nextLine();
@@ -35,7 +35,7 @@ public class TaskCreationAndUpdate {
         }
     }
 
-    public void updateTask(TaskCollections taskCollections, int taskID) {
+    public void updateTask(TaskRepository taskCollections, int taskID) {
 
 
 
@@ -43,12 +43,12 @@ public class TaskCreationAndUpdate {
 
 
 
-    public void createTask(TaskCollections taskCollections,
-                              String title,
-                              String description,
-                              Status status,
-                              String taskType,
-                              int taskID) {
+    public void createTask(TaskRepository taskCollections,
+                           String title,
+                           String description,
+                           Status status,
+                           String taskType,
+                           int taskID) {
 
         switch (taskType.toLowerCase()) {
             case "task":
@@ -88,7 +88,7 @@ public class TaskCreationAndUpdate {
         return status;
     }
 
-    public void connectEpicAndSubTask(TaskCollections taskCollections, int taskID, int epicID) {
+    public void connectEpicAndSubTask(TaskRepository taskCollections, int taskID, int epicID) {
 
         HashMap<Integer, Epic> epics = taskCollections.getEpics();
         HashMap<Integer, Subtask> subtasks = taskCollections.getSubtasks();
@@ -100,7 +100,7 @@ public class TaskCreationAndUpdate {
         Subtask subtask = subtasks.get(taskID);
         subtask.setEpicTaskID(epicID);
 
-    }
+    } */
 
 
 }

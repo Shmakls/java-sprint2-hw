@@ -1,6 +1,6 @@
 package ru.Andrianov;
 
-import ru.Andrianov.data.TaskCollections;
+import ru.Andrianov.data.TaskRepository;
 import ru.Andrianov.operations.AdditionalMethods;
 import ru.Andrianov.operations.EpicStatus;
 import ru.Andrianov.operations.TaskCreationAndUpdate;
@@ -10,14 +10,14 @@ import java.util.Scanner;
 public class Manager {
 
     int taskID;
-    TaskCollections taskCollections;
+    TaskRepository taskCollections;
     TaskCreationAndUpdate taskCreation;
     TaskOperations taskOperations;
     EpicStatus epicStatus;
     AdditionalMethods additionalMethods;
 
     public Manager() {
-        taskCollections = new TaskCollections();
+        taskCollections = new TaskRepository();
         taskID = 0;
         taskCreation = new TaskCreationAndUpdate();
         taskOperations = new TaskOperations();
