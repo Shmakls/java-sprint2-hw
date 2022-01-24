@@ -6,34 +6,42 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class TaskCreation {
+public class TaskCreationAndUpdate {
 
     Scanner scanner = new Scanner(System.in);
 
     public void createNewTask(TaskCollections taskCollections, int taskID) {
 
-        System.out.println("Введите название задачи:");
-        String title = scanner.next();
+        System.out.print("Введите название задачи: ");
+        String title = scanner.nextLine();
+        System.out.println("");
 
-        System.out.println("Введите описание задачи:");
+        System.out.print("Введите описание задачи: ");
         String description = scanner.nextLine();
 
-        System.out.println("Введите статус задачи (NEW, IN_PROGRESS, DONE):");
-        String command = scanner.next();
+        System.out.print("Введите статус задачи (NEW, IN_PROGRESS, DONE): ");
+        String command = scanner.nextLine();
         Status status = getStatus(command);
 
-        System.out.println("Введите тип задачи (task, epic, subtask)");
-        String taskType = scanner.next();
-
-        if (taskType.equalsIgnoreCase("subtask")) {
-            System.out.println("Введите ID epic задачи, к которой относится данная подзадача:");
-            Integer epicID = Integer.parseInt(scanner.next());
-            connectEpicAndSubTask(taskCollections, taskID, epicID);
-        }
+        System.out.print("Введите тип задачи (task, epic, subtask): ");
+        String taskType = scanner.nextLine();
 
         createTask(taskCollections, title, description, status, taskType, taskID);
 
+        if (taskType.equalsIgnoreCase("subtask")) {
+            System.out.print("Введите ID epic задачи, к которой относится данная подзадача: ");
+            Integer epicID = Integer.parseInt(scanner.next());
+            connectEpicAndSubTask(taskCollections, taskID, epicID);
+        }
     }
+
+    public void updateTask(TaskCollections taskCollections, int taskID) {
+
+
+
+    }
+
+
 
     public void createTask(TaskCollections taskCollections,
                               String title,

@@ -8,12 +8,10 @@ public class TaskCollections {
     private HashMap<Integer, Subtask> subtasks;
     private HashMap<Integer, Epic> epics;
 
-    public TaskCollections(HashMap<Integer, Task> tasks,
-                           HashMap<Integer, Subtask> subtasks,
-                           HashMap<Integer, Epic> epics) {
-        this.tasks = tasks;
-        this.subtasks = subtasks;
-        this.epics = epics;
+    public TaskCollections() {
+        tasks = new HashMap<>();
+        subtasks = new HashMap<>();
+        epics = new HashMap<>();
     }
 
     public HashMap<Integer, Task> getTasks() {
