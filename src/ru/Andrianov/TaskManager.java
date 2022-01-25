@@ -43,7 +43,7 @@ public class TaskManager {
     public void printAllTasks() {
         HashMap<Integer, Task> tasks = taskRepository.getTasks();
         System.out.println("");
-        System.out.print("Вывожу спсок всех задач:");
+        System.out.print("Вывожу список всех задач:");
         for (Integer integer : tasks.keySet()) {
             Task task = tasks.get(integer);
             System.out.println("");
