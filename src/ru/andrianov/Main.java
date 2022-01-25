@@ -1,10 +1,10 @@
-package ru.Andrianov;
+package ru.andrianov;
 
 
-import ru.Andrianov.data.Epic;
-import ru.Andrianov.data.Status;
-import ru.Andrianov.data.Subtask;
-import ru.Andrianov.data.Task;
+import ru.andrianov.data.Epic;
+import ru.andrianov.data.Status;
+import ru.andrianov.data.Subtask;
+import ru.andrianov.data.Task;
 
 public class Main {
 
@@ -20,8 +20,8 @@ public class Main {
 
         taskManager.printAllTasks();
 
-        taskManager.removeTaskByID(7);
-        taskManager.removeTaskByID(1);
+        taskManager.removeTaskById(7);
+        taskManager.removeTaskById(1);
 
         taskManager.printAllTasks();
 

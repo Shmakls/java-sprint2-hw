@@ -1,4 +1,4 @@
-package ru.Andrianov.data;
+package ru.andrianov.data;
 
 public enum Status {
 

@@ -1,4 +1,4 @@
-package ru.Andrianov.data;
+package ru.andrianov.data;
 
 import java.util.HashMap;
 
@@ -21,25 +21,25 @@ public class TaskRepository {
     }
 
     public Integer createNewTask(Task task) {
-        idCounter++;
-        tasks.put(idCounter, task);
-        return idCounter;
+        task.setId(++idCounter);
+        tasks.put(task.getId(), task);
+        return task.getId();
     }
 
     public void clearAllTasks() {
         tasks.clear();
     }
 
-    public Task getTaskByID(Integer taskID) {
-            return tasks.get(taskID);
+    public Task getTaskById(Integer taskId) {
+            return tasks.get(taskId);
     }
 
-    public void removeTaskByID(Integer taskID) {
-        tasks.remove(taskID);
+    public void removeTaskById(Integer taskId) {
+        tasks.remove(taskId);
     }
 
-    public void updateTask(Task task, Integer taskID) {
-        tasks.put(taskID, task);
+    public void updateTask(Task task, Integer taskId) {
+        tasks.put(taskId, task);
     }
 
 }
