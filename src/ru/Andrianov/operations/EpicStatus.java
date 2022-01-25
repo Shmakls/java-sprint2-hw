@@ -1,20 +1,17 @@
 package ru.Andrianov.operations;
 
-import ru.Andrianov.data.Epic;
-import ru.Andrianov.data.Status;
-import ru.Andrianov.data.Subtask;
-import ru.Andrianov.data.TaskRepository;
+import ru.Andrianov.data.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EpicStatus {
 
-    public void checkEpicStatus(TaskRepository taskCollections, int epicID) {
+    public void checkAndChangeEpicStatus(TaskRepository taskRepository, int epicID) {
 
-        HashMap<Integer, Epic> epics = taskCollections.getEpics();
-        HashMap<Integer, Subtask> subtasks = taskCollections.getSubtasks();
-        Epic epic = epics.get(epicID);
+
+
+        Epic epic = (Epic) taskRepository.getTaskByID(epicID);
         ArrayList<Integer> subtasksListID = epic.getSubtasksListID();
 
         int countNew = 0;
@@ -22,7 +19,7 @@ public class EpicStatus {
 
         for (Integer integer : subtasksListID) {
 
-            Subtask subtask = subtasks.get(integer);
+            Subtask subtask = (Subtask) taskRepository.getTaskByID(integer);
 
             if (subtask.getStatus() == Status.IN_PROGRESS) {
                 epic.setStatus(Status.IN_PROGRESS);
