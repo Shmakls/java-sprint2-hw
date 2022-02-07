@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        TaskManager taskManager = new TaskManager();
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         test1(taskManager);
 
@@ -36,7 +36,7 @@ public class Main {
 
         }
 
-        public static void test1(TaskManager taskManager) {
+        public static void test1(InMemoryTaskManager taskManager) {
             taskManager.createNewTask(new Epic("Сделать ремонт",
                     "Привести квартиру в жилоподный вид",
                     Status.NEW));
@@ -66,7 +66,7 @@ public class Main {
                     Status.NEW));
         }
 
-        public static void test2(TaskManager taskManager) {
+        public static void test2(InMemoryTaskManager taskManager) {
 
             taskManager.updateTask(new Subtask("Купить материал",
                     "Позвонить в магазин и сделать заказ",
