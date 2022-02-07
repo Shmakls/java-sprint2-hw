@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class EpicStatus {
 
-    public void checkAndChangeEpicStatus(TaskRepository taskRepository, int epicId) {
+    public void checkAndChangeEpicStatus(InMemoryTaskRepository taskRepository, int epicId) {
 
         Epic epic = (Epic) taskRepository.getTaskById(epicId);
         ArrayList<Integer> subtasksIds = epic.getSubtasksIds();

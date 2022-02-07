@@ -1,9 +1,6 @@
 package ru.andrianov;
 
-import ru.andrianov.data.Epic;
-import ru.andrianov.data.Subtask;
-import ru.andrianov.data.Task;
-import ru.andrianov.data.TaskRepository;
+import ru.andrianov.data.*;
 import ru.andrianov.operations.EpicStatus;
 
 import java.util.ArrayList;
@@ -11,12 +8,14 @@ import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private TaskRepository taskRepository;
+    private InMemoryTaskRepository taskRepository;
     private EpicStatus epicStatus;
+    private InMemoryHistoryManager inMemoryHistoryManager;
 
     public InMemoryTaskManager() {
-        taskRepository = new TaskRepository();
+        taskRepository = new InMemoryTaskRepository();
         epicStatus = new EpicStatus();
+        inMemoryHistoryManager = new InMemoryHistoryManager(taskRepository);
     }
 
     @Override
@@ -153,6 +152,7 @@ public class InMemoryTaskManager implements TaskManager {
                     + ", статус: " + subtask.getStatus());
         }
     }
+
 
 }
 

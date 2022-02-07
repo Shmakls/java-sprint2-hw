@@ -1,45 +1,15 @@
 package ru.andrianov.data;
 
-import java.util.HashMap;
+public interface TaskRepository {
 
-public class TaskRepository {
+    Integer createNewTask(Task task);
 
-    private HashMap<Integer, Task> tasks;
-    Integer idCounter;
+    void clearAllTasks();
 
-    public TaskRepository() {
-        tasks = new HashMap<>();
-        idCounter = 0;
-    }
+    Task getTaskById(Integer taskId);
 
-    public HashMap<Integer, Task> getTasks() {
-        return tasks;
-    }
+    void removeTaskById(Integer taskId);
 
-    public void setTasks(HashMap<Integer, Task> tasks) {
-        this.tasks = tasks;
-    }
-
-    public Integer createNewTask(Task task) {
-        task.setId(++idCounter);
-        tasks.put(task.getId(), task);
-        return task.getId();
-    }
-
-    public void clearAllTasks() {
-        tasks.clear();
-    }
-
-    public Task getTaskById(Integer taskId) {
-            return tasks.get(taskId);
-    }
-
-    public void removeTaskById(Integer taskId) {
-        tasks.remove(taskId);
-    }
-
-    public void updateTask(Task task, Integer taskId) {
-        tasks.put(taskId, task);
-    }
+    void updateTask(Task task, Integer taskId);
 
 }

@@ -2,6 +2,8 @@ package ru.andrianov;
 
 import ru.andrianov.data.Task;
 
+import java.util.List;
+
 interface TaskManager {
 
 
@@ -18,5 +20,6 @@ interface TaskManager {
     void updateTask(Task task, int taskId);
 
     void getSubtaskListByEpic(int epicId);
+
 
 }
