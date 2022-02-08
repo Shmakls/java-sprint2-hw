@@ -1,27 +1,32 @@
 package ru.andrianov.data;
 
-import ru.andrianov.data.HistoryManager;
-import ru.andrianov.data.Task;
-import ru.andrianov.data.InMemoryTaskRepository;
-
-import java.util.List;
+import java.util.ArrayList;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private InMemoryTaskRepository taskRepository;
+    private ArrayList<Task> viewedTasks;
 
-    public InMemoryHistoryManager(InMemoryTaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
+    public InMemoryHistoryManager() {
+        viewedTasks = new ArrayList<>();
     }
 
     @Override
     public void add(Task task) {
-
+        viewedTasks.add(task);
     }
 
     @Override
-    public List<Task> getHistory() {
-        System.out.println("Список последних 10 просмотренных задач получен!");
-        return taskRepository.getViewedTask();
+    public ArrayList<Task> getHistory() {
+        return viewedTasks;
+    }
+
+    @Override
+    public void removeTaskFromHistoryById(Integer taskId) {
+        viewedTasks.removeIf(task -> taskId.equals(task.getId()));
+    }
+
+    @Override
+    public void clearHistory() {
+        viewedTasks.clear();
     }
 }

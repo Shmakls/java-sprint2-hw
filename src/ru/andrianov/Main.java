@@ -10,77 +10,91 @@ public class Main {
 
     public static void main(String[] args) {
 
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+        TaskManager taskManager = new TaskManager();
 
-        test1(inMemoryTaskManager);
+        test1(taskManager);                             // Создаём 7 новых задач.
 
-        inMemoryTaskManager.printAllTasks();
+        taskManager.printAllTasks();                    // печатаем список
 
-        test2(inMemoryTaskManager);
+        test2(taskManager);                             // обновляем задачи
 
-        inMemoryTaskManager.printAllTasks();
+        taskManager.printAllTasks();                    // печатаем список и проверям что обновилось
 
-        inMemoryTaskManager.removeTaskById(7);
-        inMemoryTaskManager.removeTaskById(1);
+        Task task = taskManager.getTaskById(2);   // вызываем поочереди 3 задачи для проверки попадания в историю
+        task = taskManager.getTaskById(7);
+        task = taskManager.getTaskById(1);
+        task = taskManager.getTaskById(6);
 
-        inMemoryTaskManager.printAllTasks();
+        System.out.println("");                         //просто для красоты вывода
 
-        inMemoryTaskManager.getSubtaskListByEpic(4);
+        taskManager.printHistory();                     //проверяем что задачки попали в историю
 
-        inMemoryTaskManager.clearAllTasks();
+        taskManager.removeTaskById(7);            // удаляем задачку
+        taskManager.removeTaskById(1);            // удаляем задачку
 
-        inMemoryTaskManager.printAllTasks();
+        taskManager.printAllTasks();                    // печатаем задачи
+
+        taskManager.printHistory();                     // проверям что часть задачек из истории улетела
+
+
+        taskManager.getSubtaskListByEpic(4);
+
+        taskManager.clearAllTasks();                    // чистим задачник
+
+        taskManager.printAllTasks();                    //проверяем что почистилось
+
+        taskManager.printHistory();                     //проверям что история тоже почистилась
 
 
 
 
         }
 
-        public static void test1(InMemoryTaskManager inMemoryTaskManager) {
-            inMemoryTaskManager.createNewTask(new Epic("Сделать ремонт",
+        public static void test1(TaskManager taskManager) {
+            taskManager.createNewTask(new Epic("Сделать ремонт",
                     "Привести квартиру в жилоподный вид",
                     Status.NEW));
 
-            inMemoryTaskManager.createNewTask(new Subtask("Купить материал",
+            taskManager.createNewTask(new Subtask("Купить материал",
                     "Позвонить в магазин и сделать заказ",
                     Status.NEW,1));
 
-            inMemoryTaskManager.createNewTask(new Subtask("Сделать проект",
+            taskManager.createNewTask(new Subtask("Сделать проект",
                     "Заказать проект у дизайнера",
                     Status.IN_PROGRESS, 1));
 
-            inMemoryTaskManager.createNewTask(new Epic("Написать тест-программу",
+            taskManager.createNewTask(new Epic("Написать тест-программу",
                     "но я пока не умею",
                     Status.NEW));
 
-            inMemoryTaskManager.createNewTask(new Subtask("Попытка состряпать подзадачу 1",
+            taskManager.createNewTask(new Subtask("Попытка состряпать подзадачу 1",
                     "попытка успешно провалена",
                     Status.NEW, 4));
 
-            inMemoryTaskManager.createNewTask(new Task("Выкинуть мусор",
+            taskManager.createNewTask(new Task("Выкинуть мусор",
                     "взять пакет и дойти до мусорки",
                     Status.NEW));
 
-            inMemoryTaskManager.createNewTask(new Task("Заварить дверь соседа",
+            taskManager.createNewTask(new Task("Заварить дверь соседа",
                     "А нехер шуметь по ночам",
                     Status.NEW));
         }
 
-        public static void test2(InMemoryTaskManager inMemoryTaskManager) {
+        public static void test2(TaskManager taskManager) {
 
-            inMemoryTaskManager.updateTask(new Subtask("Купить материал",
+            taskManager.updateTask(new Subtask("Купить материал",
                     "Позвонить в магазин и сделать заказ",
                     Status.DONE,1), 2);
 
-            inMemoryTaskManager.updateTask(new Subtask("Сделать проект",
+            taskManager.updateTask(new Subtask("Сделать проект",
                     "Заказать проект у дизайнера",
                     Status.DONE, 1), 3);
 
-            inMemoryTaskManager.updateTask(new Subtask("Попытка состряпать подзадачу 1",
+            taskManager.updateTask(new Subtask("Попытка состряпать подзадачу 1",
                     "попытка успешно провалена",
                     Status.IN_PROGRESS, 4), 5);
 
-            inMemoryTaskManager.updateTask(new Task("Заварить дверь соседа",
+            taskManager.updateTask(new Task("Заварить дверь соседа",
                     "А нехер шуметь по ночам",
                     Status.DONE), 7);
 

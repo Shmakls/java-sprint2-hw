@@ -12,4 +12,6 @@ public interface HistoryManager {
 
     void removeTaskFromHistoryById(Integer taskId);
 
+    void clearHistory();
+
 }
