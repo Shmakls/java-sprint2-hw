@@ -1,6 +1,5 @@
 package ru.andrianov;
 
-import com.sun.source.tree.LiteralTree;
 import ru.andrianov.data.*;
 import ru.andrianov.operations.EpicStatus;
 
@@ -9,29 +8,27 @@ import java.util.HashMap;
 
 public class TaskManager {
 
-    private InMemoryTaskRepository inMemoryTaskRepository;
+    private TaskRepository taskRepository;
     private EpicStatus epicStatus;
-    private InMemoryHistoryManager inMemoryHistoryManager;
-    private Managers managers;
+    private HistoryManager historyManager;
 
-    public TaskManager() {                                                              //Не до конца понимаю правильно ли тут реализован
-        managers = new Managers();                                                      //конструтктор, не улавливаю логики в подмене
-        inMemoryTaskRepository = (InMemoryTaskRepository) managers.getDefault();        //репозитория
+    public TaskManager(TaskRepository taskRepository, HistoryManager historyManager) {
+        this.taskRepository = taskRepository;
         epicStatus = new EpicStatus();
-        inMemoryHistoryManager = (InMemoryHistoryManager) managers.getDefaultHistory();
+        this.historyManager = historyManager;
     }
 
     public void createNewTask(Task task) {
-        Integer taskId = inMemoryTaskRepository.createNewTask(task);
+        Integer taskId = taskRepository.createNewTask(task);
         if (task != null) {
             if (task instanceof Subtask) {
                 int epicTaskId = ((Subtask) task).getEpicTaskId();
-                Epic epicTask = (Epic) inMemoryTaskRepository.getTaskById(epicTaskId);
+                Epic epicTask = (Epic) taskRepository.getTaskById(epicTaskId);
                 ArrayList<Integer> subtasksIds = epicTask.getSubtasksIds();
                 if (!subtasksIds.contains(taskId)) {
                     subtasksIds.add(taskId);
                 }
-                epicStatus.checkAndChangeEpicStatus(inMemoryTaskRepository, epicTaskId);
+                epicStatus.checkAndChangeEpicStatus(taskRepository, epicTaskId);
                 task.setId(taskId);
             }
             System.out.println("Новая задача создана. ID - " + taskId
@@ -41,7 +38,7 @@ public class TaskManager {
     }
 
     public void printAllTasks() {
-        HashMap<Integer, Task> tasks = inMemoryTaskRepository.getTasks();
+        HashMap<Integer, Task> tasks = taskRepository.getTasks();
         System.out.println("");
         System.out.print("Вывожу список всех задач:");
         for (Integer taskId : tasks.keySet()) {
@@ -65,34 +62,34 @@ public class TaskManager {
     }
 
     public void clearAllTasks() {
-        inMemoryTaskRepository.clearAllTasks();
-        inMemoryHistoryManager.clearHistory();
+        taskRepository.clearAllTasks();
+        historyManager.clearHistory();
         System.out.println("Все задачи удалены!");
     }
 
     public Task getTaskById(int taskId) {
-        Task task = inMemoryTaskRepository.getTaskById(taskId);
+        Task task = taskRepository.getTaskById(taskId);
         System.out.println("Задача \"" + task.getTitle() + "\" получена.");
-        inMemoryHistoryManager.add(task);
+        historyManager.add(task);
         return task;
     }
 
     public void removeTaskById(int taskId) {
-        Task task = inMemoryTaskRepository.getTaskById(taskId);
+        Task task = taskRepository.getTaskById(taskId);
         int epicTaskId = 0;
 
         if (task instanceof Epic) {
             ArrayList<Integer> subtasksIds = ((Epic) task).getSubtasksIds();
             for (Integer subtaskId : subtasksIds) {
-                inMemoryTaskRepository.removeTaskById(subtaskId);
-                inMemoryHistoryManager.removeTaskFromHistoryById(subtaskId);
+                taskRepository.removeTaskById(subtaskId);
+                historyManager.removeTaskFromHistoryById(subtaskId);
             }
             System.out.println("Все связанные подзадачи удалены!");
         }
 
         if (task instanceof Subtask) {
             epicTaskId = ((Subtask) task).getEpicTaskId();
-            Epic epicTask = (Epic) inMemoryTaskRepository.getTaskById(epicTaskId);
+            Epic epicTask = (Epic) taskRepository.getTaskById(epicTaskId);
 
             ArrayList<Integer> subtasksIds = epicTask.getSubtasksIds();
             subtasksIds.remove(taskId);
@@ -101,13 +98,13 @@ public class TaskManager {
         }
 
         String title = task.getTitle();
-        inMemoryTaskRepository.removeTaskById(taskId);
+        taskRepository.removeTaskById(taskId);
         System.out.println("Задача \"" + title + "\" удалена!");
 
-        inMemoryHistoryManager.removeTaskFromHistoryById(taskId);
+        historyManager.removeTaskFromHistoryById(taskId);
 
         if (task instanceof Subtask) {
-            epicStatus.checkAndChangeEpicStatus(inMemoryTaskRepository, epicTaskId);
+            epicStatus.checkAndChangeEpicStatus(taskRepository, epicTaskId);
         }
 
     }
@@ -127,29 +124,29 @@ public class TaskManager {
 
         task.setId(taskId);
 
-        inMemoryTaskRepository.updateTask(task, taskId);
+        taskRepository.updateTask(task, taskId);
         System.out.println("Задача с ID " + taskId + " обновлена.");
 
         if (task instanceof Epic) {
-            Epic epicTask = (Epic) inMemoryTaskRepository.getTaskById(taskId);
+            Epic epicTask = (Epic) taskRepository.getTaskById(taskId);
             epicTask.setSubtasksIds(subtasksIds);
         }
 
         if (task instanceof Subtask) {
-            epicStatus.checkAndChangeEpicStatus(inMemoryTaskRepository, epicTaskId);
+            epicStatus.checkAndChangeEpicStatus(taskRepository, epicTaskId);
         }
 
     }
 
     public void getSubtaskListByEpic(int epicId) {
 
-        Epic epic = (Epic) inMemoryTaskRepository.getTaskById(epicId);
+        Epic epic = (Epic) taskRepository.getTaskById(epicId);
         String epicTitle = epic.getTitle();
         ArrayList<Integer> subtasksIds = epic.getSubtasksIds();
 
         System.out.println("Для epic задачи " + epicTitle + " имеются следующие подзадачи: ");
         for (Integer subtaskId : subtasksIds) {
-            Subtask subtask = (Subtask) inMemoryTaskRepository.getTaskById(subtaskId);
+            Subtask subtask = (Subtask) taskRepository.getTaskById(subtaskId);
             System.out.println("ID: " + subtaskId
                     + ", название: " + subtask.getTitle()
                     + ", описание: " + subtask.getDescription()
@@ -158,7 +155,7 @@ public class TaskManager {
     }
 
     public void printHistory() {
-        ArrayList<Task> viewedTasks = inMemoryHistoryManager.getHistory();
+        ArrayList<Task> viewedTasks = historyManager.getHistory();
         System.out.println("Вывожу историю просмотренных задач:");
         for (Task viewedTask : viewedTasks) {
             System.out.println(viewedTask);

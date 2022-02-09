@@ -14,12 +14,9 @@ public class InMemoryTaskRepository implements TaskRepository {
         idCounter = 0;
     }
 
+    @Override
     public HashMap<Integer, Task> getTasks() {
         return tasks;
-    }
-
-    public void setTasks(HashMap<Integer, Task> tasks) {
-        this.tasks = tasks;
     }
 
     @Override

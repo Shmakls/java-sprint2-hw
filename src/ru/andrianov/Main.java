@@ -1,16 +1,14 @@
 package ru.andrianov;
 
 
-import ru.andrianov.data.Epic;
-import ru.andrianov.data.Status;
-import ru.andrianov.data.Subtask;
-import ru.andrianov.data.Task;
+import ru.andrianov.data.*;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        TaskManager taskManager = new TaskManager();
+        Managers managers = new Managers(new InMemoryTaskRepository(), new InMemoryHistoryManager());
+        TaskManager taskManager = Managers.getTaskManager();
 
         test1(taskManager);                             // Создаём 7 новых задач.
 
