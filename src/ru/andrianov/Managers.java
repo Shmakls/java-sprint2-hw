@@ -1,16 +1,13 @@
 package ru.andrianov;
 
 import ru.andrianov.data.HistoryManager;
+import ru.andrianov.data.InMemoryHistoryManager;
+import ru.andrianov.data.InMemoryTaskRepository;
 import ru.andrianov.data.TaskRepository;
 
 public class Managers {
 
-    private static TaskRepository taskRepository;
-    private static HistoryManager historyManager;
-
-    public Managers(TaskRepository taskRepository, HistoryManager historyManager) {
-        Managers.taskRepository = taskRepository;
-        Managers.historyManager = historyManager;
+    public Managers() {
     }
 
     /*
@@ -21,11 +18,11 @@ public class Managers {
      */
 
     public static TaskRepository getRepository() {
-        return taskRepository;
+        return new InMemoryTaskRepository();
     }
 
     public static HistoryManager getHistoryManager() {
-        return historyManager;
+        return new InMemoryHistoryManager();
     }
 
     public static TaskManager getTaskManager() {

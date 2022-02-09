@@ -7,7 +7,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Managers managers = new Managers(new InMemoryTaskRepository(), new InMemoryHistoryManager());
         TaskManager taskManager = Managers.getTaskManager();
 
         test1(taskManager);                             // Создаём 7 новых задач.
