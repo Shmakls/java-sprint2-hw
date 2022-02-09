@@ -12,11 +12,13 @@ public class TaskManager {
     private InMemoryTaskRepository inMemoryTaskRepository;
     private EpicStatus epicStatus;
     private InMemoryHistoryManager inMemoryHistoryManager;
+    private Managers managers;
 
-    public TaskManager() {
-        inMemoryTaskRepository = new InMemoryTaskRepository();
+    public TaskManager() {                                                              //Не до конца понимаю правильно ли тут реализован
+        managers = new Managers();                                                      //конструтктор, не улавливаю логики в подмене
+        inMemoryTaskRepository = (InMemoryTaskRepository) managers.getDefault();        //репозитория
         epicStatus = new EpicStatus();
-        inMemoryHistoryManager = new InMemoryHistoryManager();
+        inMemoryHistoryManager = (InMemoryHistoryManager) managers.getDefaultHistory();
     }
 
     public void createNewTask(Task task) {
