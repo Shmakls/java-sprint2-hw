@@ -1,5 +1,6 @@
 package ru.andrianov;
 
+import ru.andrianov.HistoryManagerData.HistoryManager;
 import ru.andrianov.data.*;
 import ru.andrianov.operations.EpicStatus;
 
@@ -63,7 +64,7 @@ public class TaskManager {
 
     public void clearAllTasks() {
         taskRepository.clearAllTasks();
-        historyManager.clearHistory();
+        historyManager.clear();
         System.out.println("Все задачи удалены!");
     }
 
@@ -156,11 +157,15 @@ public class TaskManager {
 
     public void printHistory() {
         ArrayList<Task> viewedTasks = historyManager.getHistory();
-        System.out.println("Вывожу историю просмотренных задач:");
-        for (Task viewedTask : viewedTasks) {
-            System.out.println(viewedTask);
+        if (viewedTasks != null) {
+            System.out.println("Вывожу историю просмотренных задач:");
+            for (Task viewedTask : viewedTasks) {
+                System.out.println(viewedTask);
+            }
+            System.out.println("");
+        } else {
+            System.out.println("История просмотров пуста");
         }
-        System.out.println("");
     }
 
 

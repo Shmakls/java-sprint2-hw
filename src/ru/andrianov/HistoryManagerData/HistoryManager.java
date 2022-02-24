@@ -1,6 +1,8 @@
-package ru.andrianov.data;
+package ru.andrianov.HistoryManagerData;
 
 
+
+import ru.andrianov.data.Task;
 
 import java.util.ArrayList;
 
@@ -13,6 +15,6 @@ public interface HistoryManager {
 
     void removeTaskFromHistoryById(Integer taskId);
 
-    void clearHistory();
+    void clear();
 
 }

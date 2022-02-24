@@ -1,7 +1,7 @@
 package ru.andrianov;
 
-import ru.andrianov.data.HistoryManager;
-import ru.andrianov.data.InMemoryHistoryManager;
+import ru.andrianov.HistoryManagerData.HistoryManager;
+import ru.andrianov.HistoryManagerData.InMemoryHistoryManager;
 import ru.andrianov.data.InMemoryTaskRepository;
 import ru.andrianov.data.TaskRepository;
 

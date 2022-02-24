@@ -26,6 +26,11 @@ public class Main {
 
         taskManager.printHistory();                     //проверяем что задачки попали в историю
 
+        task = taskManager.getTaskById(2);        //повторно вызываем задачу 2, чтобы она удалилась из списка
+                                                        //просмотров и переехала в конец списка
+
+        taskManager.printHistory();
+
         taskManager.removeTaskById(7);            // удаляем задачку
         taskManager.removeTaskById(1);            // удаляем задачку
 
