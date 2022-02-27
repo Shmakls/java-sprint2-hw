@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class InMemoryTaskRepository implements TaskRepository {
 
-    private HashMap<Integer, Task> tasks;
+    private HashMap<Integer, Task> tasks;                       //И здесь тоже самое
     Integer idCounter;
 
     public InMemoryTaskRepository() {

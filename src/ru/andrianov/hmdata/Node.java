@@ -1,4 +1,4 @@
-package ru.andrianov.HistoryManagerData;
+package ru.andrianov.hmdata;
 
 import ru.andrianov.data.Task;
 

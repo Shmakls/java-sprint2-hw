@@ -1,4 +1,4 @@
-package ru.andrianov.HistoryManagerData;
+package ru.andrianov.hmdata;
 
 import ru.andrianov.data.Task;
 
@@ -56,7 +56,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         private Node head;
         private Node tail;
-        private int size;
 
         public Node linkLast(Task task) {
             Node oldTail = tail;
@@ -66,15 +65,14 @@ public class InMemoryHistoryManager implements HistoryManager {
                 head = newNode;
             else
                 oldTail.next = newNode;
-            size++;
             return newNode;
         }
 
         public ArrayList<Task> getTasks() {
 
-            ArrayList<Task> viewedTasks = new ArrayList<>();
-            for (Node temp = head; temp != null; temp = temp.next) {
-                viewedTasks.add(temp.task);
+            ArrayList<Task> viewedTasks = new ArrayList<>();            //Если меняю здесь на Collection, идея ругается
+            for (Node temp = head; temp != null; temp = temp.next) {    //что надо в возвращаемом значении сделать явное
+                viewedTasks.add(temp.task);                             //приведение типа к ArrayList<Task>. Как правильно поступить?
             }
             return viewedTasks;
         }
@@ -96,7 +94,6 @@ public class InMemoryHistoryManager implements HistoryManager {
                 node.next = null;
             }
             node.task = null;
-            this.size--;
         }
 
         public void clear(){
@@ -105,7 +102,6 @@ public class InMemoryHistoryManager implements HistoryManager {
                 Node node = temp.next;
                 temp = temp.next = temp.prev = null;
                 temp = node;
-                this.size --;
             }
 
         }

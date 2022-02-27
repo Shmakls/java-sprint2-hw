@@ -1,6 +1,6 @@
 package ru.andrianov;
 
-import ru.andrianov.HistoryManagerData.HistoryManager;
+import ru.andrianov.hmdata.HistoryManager;
 import ru.andrianov.data.*;
 import ru.andrianov.operations.EpicStatus;
 
