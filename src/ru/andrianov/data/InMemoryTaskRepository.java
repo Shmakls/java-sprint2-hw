@@ -2,11 +2,12 @@ package ru.andrianov.data;
 
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class InMemoryTaskRepository implements TaskRepository {
 
-    private HashMap<Integer, Task> tasks;                       //И здесь тоже самое
+    private Map<Integer, Task> tasks;
     Integer idCounter;
 
     public InMemoryTaskRepository() {
@@ -15,7 +16,7 @@ public class InMemoryTaskRepository implements TaskRepository {
     }
 
     @Override
-    public HashMap<Integer, Task> getTasks() {
+    public Map<Integer, Task> getTasks() {
         return tasks;
     }
 

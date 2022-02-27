@@ -1,10 +1,11 @@
 package ru.andrianov.data;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public interface TaskRepository {
 
-    HashMap<Integer, Task> getTasks();
+    Map<Integer, Task> getTasks();
 
     Integer createNewTask(Task task);
 

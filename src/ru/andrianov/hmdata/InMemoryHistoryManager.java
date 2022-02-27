@@ -2,9 +2,7 @@ package ru.andrianov.hmdata;
 
 import ru.andrianov.data.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
@@ -33,7 +31,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
+    public Collection<Task> getHistory() {
         return viewedTasks.getTasks();
     }
 
@@ -61,20 +59,27 @@ public class InMemoryHistoryManager implements HistoryManager {
             Node oldTail = tail;
             Node newNode = new Node(tail, task, null);
             tail = newNode;
-            if (oldTail == null)
+
+            if (oldTail == null) {
                 head = newNode;
-            else
+            }
+            else {
                 oldTail.next = newNode;
+            }
             return newNode;
         }
 
-        public ArrayList<Task> getTasks() {
+        public Collection<Task> getTasks() {
 
-            ArrayList<Task> viewedTasks = new ArrayList<>();            //Если меняю здесь на Collection, идея ругается
-            for (Node temp = head; temp != null; temp = temp.next) {    //что надо в возвращаемом значении сделать явное
-                viewedTasks.add(temp.task);                             //приведение типа к ArrayList<Task>. Как правильно поступить?
+            if (head == null) {
+                return null;
+            } else {
+                List<Task> viewedTasks = new ArrayList<>();
+                for (Node temp = head; temp != null; temp = temp.next) {
+                    viewedTasks.add(temp.task);
+                }
+                return viewedTasks;
             }
-            return viewedTasks;
         }
 
         public void removeNode(Node node) {
@@ -96,14 +101,14 @@ public class InMemoryHistoryManager implements HistoryManager {
             node.task = null;
         }
 
-        public void clear(){
+        public void clear() {
             for(Node temp = head; temp!=null;) {
                 temp.task = null;
                 Node node = temp.next;
                 temp = temp.next = temp.prev = null;
                 temp = node;
             }
-
+            head = tail = null;
         }
 
     }

@@ -3,9 +3,9 @@ package ru.andrianov;
 import ru.andrianov.hmdata.HistoryManager;
 import ru.andrianov.data.*;
 import ru.andrianov.operations.EpicStatus;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class TaskManager {
 
@@ -25,7 +25,7 @@ public class TaskManager {
             if (task instanceof Subtask) {
                 int epicTaskId = ((Subtask) task).getEpicTaskId();
                 Epic epicTask = (Epic) taskRepository.getTaskById(epicTaskId);
-                ArrayList<Integer> subtasksIds = epicTask.getSubtasksIds();
+                List<Integer> subtasksIds = epicTask.getSubtasksIds();
                 if (!subtasksIds.contains(taskId)) {
                     subtasksIds.add(taskId);
                 }
@@ -39,7 +39,7 @@ public class TaskManager {
     }
 
     public void printAllTasks() {
-        HashMap<Integer, Task> tasks = taskRepository.getTasks();
+        Map<Integer, Task> tasks = taskRepository.getTasks();
         System.out.println("");
         System.out.print("Вывожу список всех задач:");
         for (Integer taskId : tasks.keySet()) {
@@ -50,7 +50,7 @@ public class TaskManager {
                     + ", описание: " + task.getDescription()
                     + ", статус: " + task.getStatus() + ".");
             if (task instanceof Epic) {
-                ArrayList<Integer> subtasksIds = ((Epic) task).getSubtasksIds();
+                List<Integer> subtasksIds = ((Epic) task).getSubtasksIds();
                 System.out.print(" зависимые подзадачи с ID: " + subtasksIds.toString() + ".");
             }
             if (task instanceof Subtask) {
@@ -80,7 +80,7 @@ public class TaskManager {
         int epicTaskId = 0;
 
         if (task instanceof Epic) {
-            ArrayList<Integer> subtasksIds = ((Epic) task).getSubtasksIds();
+            List<Integer> subtasksIds = ((Epic) task).getSubtasksIds();
             for (Integer subtaskId : subtasksIds) {
                 taskRepository.removeTaskById(subtaskId);
                 historyManager.removeTaskFromHistoryById(subtaskId);
@@ -92,7 +92,7 @@ public class TaskManager {
             epicTaskId = ((Subtask) task).getEpicTaskId();
             Epic epicTask = (Epic) taskRepository.getTaskById(epicTaskId);
 
-            ArrayList<Integer> subtasksIds = epicTask.getSubtasksIds();
+            List<Integer> subtasksIds = epicTask.getSubtasksIds();
             subtasksIds.remove(taskId);
 
             System.out.println("Связь subtask с epic задачей удалена!");
@@ -113,7 +113,7 @@ public class TaskManager {
     public void updateTask(Task task, int taskId) {
 
         int epicTaskId = 0;
-        ArrayList<Integer> subtasksIds = null;
+        List<Integer> subtasksIds = null;
 
         if (task instanceof Epic) {
             subtasksIds = ((Epic) task).getSubtasksIds();
@@ -143,7 +143,7 @@ public class TaskManager {
 
         Epic epic = (Epic) taskRepository.getTaskById(epicId);
         String epicTitle = epic.getTitle();
-        ArrayList<Integer> subtasksIds = epic.getSubtasksIds();
+        List<Integer> subtasksIds = epic.getSubtasksIds();
 
         System.out.println("Для epic задачи " + epicTitle + " имеются следующие подзадачи: ");
         for (Integer subtaskId : subtasksIds) {
@@ -156,9 +156,9 @@ public class TaskManager {
     }
 
     public void printHistory() {
-        ArrayList<Task> viewedTasks = historyManager.getHistory();
+        Collection<Task> viewedTasks = historyManager.getHistory();
+        System.out.println("Вывожу историю просмотренных задач:");
         if (viewedTasks != null) {
-            System.out.println("Вывожу историю просмотренных задач:");
             for (Task viewedTask : viewedTasks) {
                 System.out.println(viewedTask);
             }
@@ -167,7 +167,5 @@ public class TaskManager {
             System.out.println("История просмотров пуста");
         }
     }
-
-
 }
 

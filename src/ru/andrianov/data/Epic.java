@@ -1,21 +1,22 @@
 package ru.andrianov.data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
 
-    private ArrayList<Integer> subtasksIds;                                 //И здесь ругается на тип возвращаемого
-                                                                            //значения. А если меняю и в методе ниже
+    private List<Integer> subtasksIds;
+
     public Epic(String title, String description, Status status) {
         super(title, description, status);
         subtasksIds = new ArrayList<>();
     }
 
-    public ArrayList<Integer> getSubtasksIds() {                            //вот тут, то он по всему тексту, где
-        return subtasksIds;                                                 //вызывается ArrayList ругается. Как быть
-    }                                                                       //правильно в таком случае?
+    public List<Integer> getSubtasksIds() {
+        return subtasksIds;
+    }
 
-    public void setSubtasksIds(ArrayList<Integer> subtasksIds) {
+    public void setSubtasksIds(List<Integer> subtasksIds) {
         this.subtasksIds = subtasksIds;
     }
 }

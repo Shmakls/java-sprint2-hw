@@ -1,18 +1,18 @@
 package ru.andrianov.operations;
 
 import ru.andrianov.data.*;
-
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EpicStatus {
 
     public void checkAndChangeEpicStatus(TaskRepository taskRepository, int epicId) {
 
         Epic epic = (Epic) taskRepository.getTaskById(epicId);
-        ArrayList<Integer> subtasksIds = epic.getSubtasksIds();
+        List<Integer> subtasksIds = epic.getSubtasksIds();
 
-        HashMap<Status, Integer> checker = new HashMap<>();
+        Map<Status, Integer> checker = new HashMap<>();
 
         for (Integer subtaskId : subtasksIds) {
 
