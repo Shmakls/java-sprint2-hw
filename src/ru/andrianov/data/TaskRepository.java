@@ -1,6 +1,5 @@
 package ru.andrianov.data;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public interface TaskRepository {
@@ -16,5 +15,7 @@ public interface TaskRepository {
     void removeTaskById(Integer taskId);
 
     void updateTask(Task task, Integer taskId);
+
+    Type findTypeTask(Task task);
 
 }

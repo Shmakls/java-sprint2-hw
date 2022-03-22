@@ -8,6 +8,7 @@ public class Task {
     private String description;
     private Status status;
     private Integer id;
+    private Type type;
 
     public Task(String title, String description, Status status) {
         this.title = title;
@@ -45,6 +46,14 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     @Override

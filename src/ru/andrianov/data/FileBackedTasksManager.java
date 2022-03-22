@@ -1,10 +1,18 @@
 package ru.andrianov.data;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskRepository {
 
+    String filePath;
+
+    public FileBackedTasksManager(String filePath) {
+        this.filePath = filePath;
+    }
 
     private String toString(Task task) {
 
@@ -39,44 +47,36 @@ public class FileBackedTasksManager extends InMemoryTaskRepository {
         Status status = Status.getStatusByString(fromString[3]);
         String description = fromString[4];
 
-        Task task = new Task(title, description, status);
-        task.setId(taskId);
-
         if (fromString[1].equals("SUBTASK")) {
             int epicId = Integer.parseInt(fromString[5]);
-            Subtask subtask = (Subtask) task;
-            subtask.setEpicTaskId(epicId);
-            return subtask;
-        }
-
-        if (fromString[1].equals("EPIC")) {
+            Subtask task = new Subtask(title, description, status, epicId);
+            task.setType(type);
+            return task;
+        } else if (fromString[1].equals("EPIC")) {
             List<Integer> subtasksId = new ArrayList<>();
             for (int i = 5; i < fromString.length; i ++) {
                 subtasksId.add(Integer.parseInt(fromString[i]));
             }
-            Epic epic = (Epic) task;
-            epic.setSubtasksIds(subtasksId);
-            return epic;
+            Epic task = new Epic(title, description, status);
+            task.setSubtasksIds(subtasksId);
+            return task;
+        } else {
+            Task task = new Task(title, description, status);
+            task.setId(taskId);
+            task.setType(type);
+            return task;
         }
 
-        return task;
+
+
     }
 
-    private Type findTypeTask(Task task) {
+    private void save() throws IOException {
 
-        Type typesTasks = null;
-        if (task instanceof Task) {
-            typesTasks = Type.TASK;
-        } else if (task instanceof Subtask) {
-            typesTasks = Type.SUBTASK;
-        } else if (task instanceof Epic) {
-            typesTasks = Type.EPIC;
+        String dataToWrite =
+        try (Writer fileWriter = new FileWriter(filePath, true)) {
+            fileWriter.write(toString());
         }
-        return typesTasks;
-    }
-
-    private void save() {
-
 
 
     }
