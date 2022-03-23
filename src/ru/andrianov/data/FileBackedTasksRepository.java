@@ -1,20 +1,27 @@
 package ru.andrianov.data;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class FileBackedTasksManager extends InMemoryTaskRepository {
+
+public class FileBackedTasksRepository implements TaskRepository {
 
     String filePath;
+    Map<Integer, Task> tasks;
+    Integer idCounter;
 
-    public FileBackedTasksManager(String filePath) {
+    public FileBackedTasksRepository(String filePath) {
+        tasks = new HashMap<>();
+        idCounter = 0;
         this.filePath = filePath;
     }
 
-    private String toString(Task task) {
+    public String toString(Task task) {
 
         Type type = findTypeTask(task);
 
@@ -38,7 +45,7 @@ public class FileBackedTasksManager extends InMemoryTaskRepository {
         return taskString.toString();
     }
 
-    private Task fromString(String value) {
+    public Task fromString(String value) {
 
         String[] fromString = value.split(",");
         int taskId = Integer.parseInt(fromString[0]);
@@ -71,18 +78,51 @@ public class FileBackedTasksManager extends InMemoryTaskRepository {
 
     }
 
-    private void save() throws IOException {
-
-        String dataToWrite =
-        try (Writer fileWriter = new FileWriter(filePath, true)) {
-            fileWriter.write(toString());
-        }
-
-
+    @Override
+    public Map<Integer, Task> getTasks() {
+        return tasks;
     }
 
     @Override
     public Integer createNewTask(Task task) {
-        return super.createNewTask(task);
+        task.setId(++idCounter);
+        task.setType(findTypeTask(task));
+        tasks.put(task.getId(), task);
+        TaskManagerStorageService.save(this);
+        return idCounter;
+    }
+
+    @Override
+    public void clearAllTasks() {
+        tasks.clear();
+        TaskManagerStorageService.save(this);
+    }
+
+    @Override
+    public Task getTaskById(Integer taskId) {
+        return tasks.get(taskId);
+    }
+
+    @Override
+    public void removeTaskById(Integer taskId) {
+        tasks.remove(taskId);
+        TaskManagerStorageService.save(this);
+    }
+
+    @Override
+    public void updateTask(Task task, Integer taskId) {
+        tasks.put(taskId, task);
+        TaskManagerStorageService.save(this);
+    }
+
+    @Override
+    public Type findTypeTask(Task task) {
+        if (task instanceof Subtask) {
+            return Type.SUBTASK;
+        } else if (task instanceof Epic) {
+            return Type.EPIC;
+        } else {
+            return Type.TASK;
+        }
     }
 }
