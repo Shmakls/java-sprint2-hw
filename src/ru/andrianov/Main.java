@@ -51,7 +51,7 @@ public class Main {
 
         taskManager.printAllTasks();                    // печатаем задачи
 
-        taskManager.printHistory();                     // проверям что часть задачек из истории улетела
+        taskManager.printHistory();                     // проверяем что часть задачек из истории улетела
 
 
         taskManager.getSubtaskListByEpic(4);

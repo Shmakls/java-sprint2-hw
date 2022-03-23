@@ -1,5 +1,7 @@
 package ru.andrianov;
 
+import ru.andrianov.data.FileBackedTasksRepository;
+import ru.andrianov.data.TaskManagerStorageService;
 import ru.andrianov.hmdata.HistoryManager;
 import ru.andrianov.hmdata.InMemoryHistoryManager;
 import ru.andrianov.data.InMemoryTaskRepository;
@@ -11,7 +13,9 @@ public class Managers {
     }
 
     public static TaskRepository getRepository() {
-        return new InMemoryTaskRepository();
+        FileBackedTasksRepository fbts = new FileBackedTasksRepository("");
+        TaskManagerStorageService.restore(fbts);
+        return fbts;
     }
 
     public static HistoryManager getHistoryManager() {

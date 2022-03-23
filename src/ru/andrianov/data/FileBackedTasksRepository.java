@@ -19,6 +19,28 @@ public class FileBackedTasksRepository implements TaskRepository {
         tasks = new HashMap<>();
         idCounter = 0;
         this.filePath = filePath;
+        restore();
+    }
+
+    public String readFileContentsOrNull(String filePath) {
+        try {
+            return Files.readString(Path.of(filePath));
+        } catch (IOException e) {
+            System.out.println("Невозможно прочитать файл с месячным отчётом. Возможно, файл не находится в нужной директории.");
+            return null;
+        }
+    }
+
+    public void restore() {
+        try {
+            String[] lines = readFileContentsOrNull(filePath).split("\r\n");
+            for (int i = 1; i < lines.length; i++) {
+                Task task = fromString(lines[i]);
+                tasks.put(task.getId(), task);
+            }
+        } catch (NullPointerException e) {
+            System.out.println("Данные с файла не были считаны");
+        }
     }
 
     public String toString(Task task) {
