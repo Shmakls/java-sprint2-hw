@@ -21,13 +21,8 @@ public class TaskRepositoryStorageService {
                 fileWriter.write("\n");
             }
         } catch (IOException exception) {
-            try {
-                throw new ManagerSaveException("Произошла ошибка во время записи в файл!");
-            } catch (ManagerSaveException e) {
-                e.printStackTrace();
-            }
+            throw new ManagerSaveException("Произошла ошибка во время записи в файл!");
         }
-
     }
 
     public static String readFileContentsOrNull(String filePath) {
