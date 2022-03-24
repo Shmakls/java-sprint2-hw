@@ -21,12 +21,10 @@ public class TaskRepositoryStorageService {
                 fileWriter.write("\n");
             }
         } catch (IOException exception) {
-            try {
-                throw new ManagerSaveException("Произошла ошибка во время записи в файл!");
-            } catch (ManagerSaveException mse) {
-                mse.printStackTrace();
-            }
+
+            throw new ManagerSaveException("Произошла ошибка во время записи в файл!");
         }
+
 
     }
 
@@ -41,14 +39,16 @@ public class TaskRepositoryStorageService {
 
     public static void restore(FileBackedTasksRepository tasksRepository) {
 
-        try {
-            String[] lines = TaskRepositoryStorageService.readFileContentsOrNull(tasksRepository.filePath).split("\n");
+        String line = TaskRepositoryStorageService.readFileContentsOrNull(tasksRepository.filePath);
+        if (line != null) {
+            String[] lines = line.split("\n");
+
             for (int i = 1; i < lines.length; i++) {
                 Task task = fromString(lines[i]);
                 tasksRepository.tasks.put(task.getId(), task);
             }
-        } catch (NullPointerException e) {
-            System.out.println("Данные с файла не были считаны");
+        } else {
+            System.out.println("Файл не был прочитан!");
         }
     }
 
