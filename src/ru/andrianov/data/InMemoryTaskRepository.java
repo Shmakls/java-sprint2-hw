@@ -23,7 +23,7 @@ public class InMemoryTaskRepository implements TaskRepository {
     @Override
     public Integer createNewTask(Task task) {
         task.setId(++idCounter);
-        task.setType(findTypeTask(task));
+        task.setType(TaskRepositoryStorageService.findTypeTask(task));
         tasks.put(task.getId(), task);
         return task.getId();
     }
@@ -46,18 +46,6 @@ public class InMemoryTaskRepository implements TaskRepository {
     @Override
     public void updateTask(Task task, Integer taskId) {
         tasks.put(taskId, task);
-    }
-
-    @Override
-    public Type findTypeTask(Task task) {
-
-        if (task instanceof Subtask) {
-            return Type.SUBTASK;
-        } else if (task instanceof Epic) {
-            return Type.EPIC;
-        } else {
-            return Type.TASK;
-        }
     }
 
 }

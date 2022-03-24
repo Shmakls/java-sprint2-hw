@@ -1,0 +1,121 @@
+package ru.andrianov.data;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+public class TaskRepositoryStorageService {
+
+    public static void save(FileBackedTasksRepository tasksRepository) {
+
+        String fileTitle = "id,type,name,status,description,epic\n";
+        try (Writer fileWriter = new FileWriter(tasksRepository.filePath)) {
+            fileWriter.write(fileTitle);
+            for (Integer taskId : tasksRepository.tasks.keySet()) {
+                String stringTask = toString(tasksRepository.tasks.get(taskId));
+                fileWriter.write(stringTask);
+            }
+        } catch (IOException exception) {
+            try {
+                throw new ManagerSaveException("Произошла ошибка во время записи в файл!");
+            } catch (ManagerSaveException mse) {
+                mse.printStackTrace();
+            }
+        }
+
+    }
+
+    public static String readFileContentsOrNull(String filePath) {
+        try {
+            return Files.readString(Path.of(filePath));
+        } catch (IOException e) {
+            System.out.println("Невозможно прочитать файл с месячным отчётом. Возможно, файл не находится в нужной директории.");
+            return null;
+        }
+    }
+
+    public static void restore(FileBackedTasksRepository tasksRepository) {
+
+        try {
+            String[] lines = TaskRepositoryStorageService.readFileContentsOrNull(tasksRepository.filePath).split("\r\n");
+            for (int i = 1; i < lines.length; i++) {
+                Task task = fromString(lines[i]);
+                tasksRepository.tasks.put(task.getId(), task);
+            }
+        } catch (NullPointerException e) {
+            System.out.println("Данные с файла не были считаны");
+        }
+    }
+
+    public static String toString(Task task) {
+
+        Type type = findTypeTask(task);
+
+        StringBuilder taskString = new StringBuilder((task.getId() + "," + type.currency + ","
+                + task.getTitle() + "," + task.getStatus().currency + ","
+                + task.getDescription() + ","));
+
+        if (task instanceof Subtask) {
+            taskString.append(((Subtask) task).getEpicTaskId());
+        }
+
+        if (task instanceof Epic) {
+            List<Integer> subtasksId = ((Epic) task).getSubtasksIds();
+            for (int i = 0; i < subtasksId.size(); i++) {
+                taskString.append(subtasksId.get(i));
+                if (i != subtasksId.size() - 1) {
+                    taskString.append(",");
+                }
+            }
+        }
+        return taskString.toString();
+    }
+
+    public static Task fromString(String value) {
+
+        String[] fromString = value.split(",");
+        int taskId = Integer.parseInt(fromString[0]);
+        Type type = Type.getTypeByString(fromString[1]);
+        String title = fromString[2];
+        Status status = Status.getStatusByString(fromString[3]);
+        String description = fromString[4];
+
+        if (fromString[1].equals("SUBTASK")) {
+            int epicId = Integer.parseInt(fromString[5]);
+            Subtask task = new Subtask(title, description, status, epicId);
+            task.setType(type);
+            return task;
+        } else if (fromString[1].equals("EPIC")) {
+            List<Integer> subtasksId = new ArrayList<>();
+            for (int i = 5; i < fromString.length; i ++) {
+                subtasksId.add(Integer.parseInt(fromString[i]));
+            }
+            Epic task = new Epic(title, description, status);
+            task.setSubtasksIds(subtasksId);
+            return task;
+        } else {
+            Task task = new Task(title, description, status);
+            task.setId(taskId);
+            task.setType(type);
+            return task;
+        }
+
+
+
+    }
+
+    public static Type findTypeTask(Task task) {
+        if (task instanceof Subtask) {
+            return Type.SUBTASK;
+        } else if (task instanceof Epic) {
+            return Type.EPIC;
+        } else {
+            return Type.TASK;
+        }
+    }
+
+}

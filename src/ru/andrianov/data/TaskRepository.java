@@ -16,6 +16,4 @@ public interface TaskRepository {
 
     void updateTask(Task task, Integer taskId);
 
-    Type findTypeTask(Task task);
-
 }
