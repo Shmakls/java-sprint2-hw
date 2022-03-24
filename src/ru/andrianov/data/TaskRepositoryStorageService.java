@@ -18,6 +18,7 @@ public class TaskRepositoryStorageService {
             for (Integer taskId : tasksRepository.tasks.keySet()) {
                 String stringTask = toString(tasksRepository.tasks.get(taskId));
                 fileWriter.write(stringTask);
+                fileWriter.write("\n");
             }
         } catch (IOException exception) {
             try {
@@ -33,7 +34,7 @@ public class TaskRepositoryStorageService {
         try {
             return Files.readString(Path.of(filePath));
         } catch (IOException e) {
-            System.out.println("Невозможно прочитать файл с месячным отчётом. Возможно, файл не находится в нужной директории.");
+            System.out.println("Невозможно прочитать файл. Возможно, файл не находится в нужной директории.");
             return null;
         }
     }
@@ -41,7 +42,7 @@ public class TaskRepositoryStorageService {
     public static void restore(FileBackedTasksRepository tasksRepository) {
 
         try {
-            String[] lines = TaskRepositoryStorageService.readFileContentsOrNull(tasksRepository.filePath).split("\r\n");
+            String[] lines = TaskRepositoryStorageService.readFileContentsOrNull(tasksRepository.filePath).split("\n");
             for (int i = 1; i < lines.length; i++) {
                 Task task = fromString(lines[i]);
                 tasksRepository.tasks.put(task.getId(), task);
@@ -57,14 +58,16 @@ public class TaskRepositoryStorageService {
 
         StringBuilder taskString = new StringBuilder((task.getId() + "," + type.currency + ","
                 + task.getTitle() + "," + task.getStatus().currency + ","
-                + task.getDescription() + ","));
+                + task.getDescription()));
 
         if (task instanceof Subtask) {
+            taskString.append(",");
             taskString.append(((Subtask) task).getEpicTaskId());
         }
 
         if (task instanceof Epic) {
             List<Integer> subtasksId = ((Epic) task).getSubtasksIds();
+            taskString.append(",");
             for (int i = 0; i < subtasksId.size(); i++) {
                 taskString.append(subtasksId.get(i));
                 if (i != subtasksId.size() - 1) {
@@ -88,6 +91,7 @@ public class TaskRepositoryStorageService {
             int epicId = Integer.parseInt(fromString[5]);
             Subtask task = new Subtask(title, description, status, epicId);
             task.setType(type);
+            task.setId(taskId);
             return task;
         } else if (fromString[1].equals("EPIC")) {
             List<Integer> subtasksId = new ArrayList<>();
@@ -96,6 +100,8 @@ public class TaskRepositoryStorageService {
             }
             Epic task = new Epic(title, description, status);
             task.setSubtasksIds(subtasksId);
+            task.setId(taskId);
+            task.setType(type);
             return task;
         } else {
             Task task = new Task(title, description, status);

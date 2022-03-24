@@ -17,4 +17,12 @@ public class Subtask extends Task {
         this.epicTaskId = epicTaskId;
     }
 
+    @Override
+    public String toString() {
+        return "ID: " + getId()
+                + ", название: " + getTitle()
+                + ", описание: " + getDescription()
+                + ", статус: " + getStatus() + "."
+                + " Относится к epic задаче с ID " + (getEpicTaskId()) + ".";
+    }
 }

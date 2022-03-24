@@ -1,17 +1,14 @@
 package ru.andrianov.hmdata;
 
-import ru.andrianov.data.FileBackedTasksRepository;
 import ru.andrianov.data.ManagerSaveException;
 import ru.andrianov.data.Task;
 import ru.andrianov.data.TaskRepositoryStorageService;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
+
 
 public class HistoryManagerStorageService {
 
@@ -20,9 +17,14 @@ public class HistoryManagerStorageService {
         String fileTitle = "id,type,name,status,description,epic\n";
         try (Writer fileWriter = new FileWriter(historyManager.filePath)) {
             fileWriter.write(fileTitle);
-            for (Task task : historyManager.getHistory()) {
-                String stringTask = TaskRepositoryStorageService.toString(task);
-                fileWriter.write(stringTask);
+            if (historyManager.getHistory() != null) {
+                for (Task task : historyManager.getHistory()) {
+                    String stringTask = TaskRepositoryStorageService.toString(task);
+                    fileWriter.write(stringTask);
+                    fileWriter.write("\n");
+                }
+            } else {
+                System.out.println("");
             }
         } catch (IOException exception) {
             try {
@@ -38,7 +40,7 @@ public class HistoryManagerStorageService {
         try {
             return Files.readString(Path.of(filePath));
         } catch (IOException e) {
-            System.out.println("Невозможно прочитать файл с месячным отчётом. Возможно, файл не находится в нужной директории.");
+            System.out.println("Невозможно прочитать файл. Возможно, файл не находится в нужной директории.");
             return null;
         }
     }
@@ -46,7 +48,7 @@ public class HistoryManagerStorageService {
     public static void restore(FileBackedHistoryManager historyManager) {
 
         try {
-            String[] lines = TaskRepositoryStorageService.readFileContentsOrNull(historyManager.filePath).split("\r\n");
+            String[] lines = HistoryManagerStorageService.readFileContentsOrNull(historyManager.filePath).split("\n");
             for (int i = 1; i < lines.length; i++) {
                 Task task = TaskRepositoryStorageService.fromString(lines[i]);
                 Integer taskId = task.getId();

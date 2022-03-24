@@ -45,18 +45,7 @@ public class TaskManager {
         for (Integer taskId : tasks.keySet()) {
             Task task = tasks.get(taskId);
             System.out.println("");
-            System.out.print("ID: " + taskId
-                    + ", название: " + task.getTitle()
-                    + ", описание: " + task.getDescription()
-                    + ", статус: " + task.getStatus() + ".");
-            if (task instanceof Epic) {
-                List<Integer> subtasksIds = ((Epic) task).getSubtasksIds();
-                System.out.print(" зависимые подзадачи с ID: " + subtasksIds.toString() + ".");
-            }
-            if (task instanceof Subtask) {
-                int epicTask = ((Subtask) task).getEpicTaskId();
-                System.out.print(" относится к epic задаче с ID " + (epicTask) + ".");
-            }
+            System.out.print(task);
         }
         System.out.println("");
         System.out.println("");
