@@ -19,9 +19,9 @@ public class TaskManager {
         this.historyManager = historyManager;
     }
 
-    public void createNewTask(Task task) {
-        Integer taskId = taskRepository.createNewTask(task);
+    public Integer createNewTask(Task task) {
         if (task != null) {
+            Integer taskId = taskRepository.createNewTask(task);
             if (task instanceof Subtask) {
                 int epicTaskId = ((Subtask) task).getEpicTaskId();
                 Epic epicTask = (Epic) taskRepository.getTaskById(epicTaskId);
@@ -35,6 +35,9 @@ public class TaskManager {
             System.out.println("Новая задача создана. ID - " + taskId
                     + ", название: " + task.getTitle()
                     + ", описание: " + task.getDescription() + ".");
+            return taskId;
+        } else {
+            return null;
         }
     }
 
