@@ -10,15 +10,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 
-public class HistoryManagerStorageService {
+public class HistoryRepositoryStorageService {
 
-    public static void save(FileBackedHistoryManager historyManager) {
+    public static void save(FileBackedHistoryRepository historyRepository) {
 
         String fileTitle = "id,type,name,status,description,epic\n";
-        try (Writer fileWriter = new FileWriter(historyManager.filePath)) {
+        try (Writer fileWriter = new FileWriter(historyRepository.filePath)) {
             fileWriter.write(fileTitle);
-            if (historyManager.getHistory() != null) {
-                for (Task task : historyManager.getHistory()) {
+            if (historyRepository.getHistory() != null) {
+                for (Task task : historyRepository.getHistory()) {
                     String stringTask = TaskRepositoryStorageService.toString(task);
                     fileWriter.write(stringTask);
                     fileWriter.write("\n");
@@ -45,21 +45,21 @@ public class HistoryManagerStorageService {
         }
     }
 
-    public static void restore(FileBackedHistoryManager historyManager) {
+    public static void restore(FileBackedHistoryRepository historyRepository) {
 
         try {
-            String[] lines = HistoryManagerStorageService.readFileContentsOrNull(historyManager.filePath).split("\n");
+            String[] lines = HistoryRepositoryStorageService.readFileContentsOrNull(historyRepository.filePath).split("\n");
             for (int i = 1; i < lines.length; i++) {
                 Task task = TaskRepositoryStorageService.fromString(lines[i]);
                 Integer taskId = task.getId();
-                if (historyManager.nodeWithId.containsKey(taskId)) {
-                    Node node = historyManager.nodeWithId.get(taskId);
-                    historyManager.viewedTasks.removeNode(node);
-                    historyManager.viewedTasks.linkLast(task);
-                    historyManager.nodeWithId.remove(taskId);
+                if (historyRepository.nodeWithId.containsKey(taskId)) {
+                    Node node = historyRepository.nodeWithId.get(taskId);
+                    historyRepository.viewedTasks.removeNode(node);
+                    historyRepository.viewedTasks.linkLast(task);
+                    historyRepository.nodeWithId.remove(taskId);
                 } else {
-                    Node node = historyManager.viewedTasks.linkLast(task);
-                    historyManager.nodeWithId.put(taskId, node);
+                    Node node = historyRepository.viewedTasks.linkLast(task);
+                    historyRepository.nodeWithId.put(taskId, node);
                 }
             }
         } catch (NullPointerException e) {

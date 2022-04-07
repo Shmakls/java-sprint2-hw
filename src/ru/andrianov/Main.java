@@ -14,7 +14,7 @@ public class Main {
 
         // 1. Заполнение менеджера и провека его работы
 
-        /* TaskManager taskManager = Managers.getTaskManager();
+        TaskManager taskManager = Managers.getTaskManager();
 
         test1(taskManager);                             // Создаём 7 новых задач.
 
@@ -46,7 +46,7 @@ public class Main {
         taskManager.printHistory();                     // проверяем что часть задачек из истории улетела
 
 
-        taskManager.getSubtaskListByEpic(4); */
+        taskManager.getSubtaskListByEpic(4);
 
         // конец пункта 1.
 
@@ -62,11 +62,11 @@ public class Main {
 
             // 2. Проверка восстановления
 
-        TaskManager taskManager = Managers.getTaskManager();
+        /* TaskManager taskManager = Managers.getTaskManager();
 
         taskManager.printAllTasks();
         taskManager.printHistory();
-
+        */
         // Конец пункта 2.
 
         }

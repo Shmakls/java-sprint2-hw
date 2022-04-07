@@ -2,15 +2,18 @@ package ru.andrianov.hmdata;
 
 import ru.andrianov.data.Task;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-public class InMemoryHistoryManager implements HistoryManager {
+public class FileBackedHistoryRepository implements HistoryRepository {
 
-    private HomeLinkedList viewedTasks;
-    private Map<Integer, Node> nodeWithId;
+    String filePath;
+    HomeLinkedList viewedTasks;
+    Map<Integer, Node> nodeWithId;
 
-
-    public InMemoryHistoryManager() {
+    public FileBackedHistoryRepository(String filePath) {
+        this.filePath = filePath;
         viewedTasks = new HomeLinkedList();
         nodeWithId = new HashMap<>();
     }
@@ -27,18 +30,12 @@ public class InMemoryHistoryManager implements HistoryManager {
             Node node = viewedTasks.linkLast(task);
             nodeWithId.put(taskId, node);
         }
-
+        HistoryRepositoryStorageService.save(this);
     }
 
     @Override
     public Collection<Task> getHistory() {
         return viewedTasks.getTasks();
-    }
-
-    @Override
-    public void clear() {
-        nodeWithId.clear();
-        viewedTasks.clear();
     }
 
     @Override
@@ -48,7 +45,13 @@ public class InMemoryHistoryManager implements HistoryManager {
             viewedTasks.removeNode(node);
             nodeWithId.remove(taskId);
         }
+        HistoryRepositoryStorageService.save(this);
     }
 
+    @Override
+    public void clear() {
+        nodeWithId.clear();
+        viewedTasks.clear();
+        HistoryRepositoryStorageService.save(this);
+    }
 }
-

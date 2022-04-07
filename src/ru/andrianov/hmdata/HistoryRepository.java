@@ -4,7 +4,7 @@ import ru.andrianov.data.Task;
 import java.util.Collection;
 
 
-public interface HistoryManager {
+public interface HistoryRepository {
 
     void add(Task task);
 

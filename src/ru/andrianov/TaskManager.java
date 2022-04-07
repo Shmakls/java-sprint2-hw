@@ -1,6 +1,6 @@
 package ru.andrianov;
 
-import ru.andrianov.hmdata.HistoryManager;
+import ru.andrianov.hmdata.HistoryRepository;
 import ru.andrianov.data.*;
 import ru.andrianov.operations.EpicStatus;
 import java.util.Collection;
@@ -11,9 +11,9 @@ public class TaskManager {
 
     private TaskRepository taskRepository;
     private EpicStatus epicStatus;
-    private HistoryManager historyManager;
+    private HistoryRepository historyManager;
 
-    public TaskManager(TaskRepository taskRepository, HistoryManager historyManager) {
+    public TaskManager(TaskRepository taskRepository, HistoryRepository historyManager) {
         this.taskRepository = taskRepository;
         epicStatus = new EpicStatus();
         this.historyManager = historyManager;

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 abstract class TaskRepositoryTest<T extends TaskRepository> {
     T taskRepository;
     Task task1 = new Task("TestTask1", "DescriptionTestTask1", Status.NEW);
-    Task task2 = new Task("TestTask1", "DescriptionTestTask2", Status.IN_PROGRESS);
+    Task task2 = new Task("TestTask2", "DescriptionTestTask2", Status.IN_PROGRESS);
 
     public TaskRepositoryTest(T taskRepository) {
         this.taskRepository = taskRepository;
