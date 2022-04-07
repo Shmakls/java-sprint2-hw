@@ -40,9 +40,13 @@ abstract class TaskRepositoryTest<T extends TaskRepository> {
     void shouldBeClearAllTasks() {
         taskRepository.createNewTask(task1);
 
+        Map<Integer, Task> tasks = taskRepository.getTasks();
+
+        assertEquals(1, tasks.size());
+
         taskRepository.clearAllTasks();
 
-        Map<Integer, Task> tasks = taskRepository.getTasks();
+        tasks = taskRepository.getTasks();
 
         assertEquals(0, tasks.size(), "История не очищена.");
 

@@ -13,15 +13,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class TaskManagerTest {
 
     TaskManager taskManager;
-    Task task1 = new Task("TestTask1", "DescriptionTestTask1", Status.NEW);
-    Task task2 = new Task("TestTask2", "DescriptionTestTask2", Status.IN_PROGRESS);
-    Task epic1 = new Epic("TestEpic1", "DescriptionTestEpic1", Status.NEW);
-    Task subtask1 = new Subtask("TestSubtask1", "DescriptionTestSubtask1", Status.NEW, 3);
-    Task subtask2 = new Subtask("TestSubtask2", "DescriptionTestSubtask2", Status.IN_PROGRESS, 3);
+    Task task1;
+    Task task2;
+    Task epic1;
+    Task subtask1;
+    Task subtask2;
 
     @BeforeEach
     void createNewTaskManager() {
         taskManager = Managers.getTaskManager();
+        task1 = new Task("TestTask1", "DescriptionTestTask1", Status.NEW);
+        task2 = new Task("TestTask2", "DescriptionTestTask2", Status.IN_PROGRESS);
+        epic1 = new Epic("TestEpic1", "DescriptionTestEpic1", Status.NEW);
+        subtask1 = new Subtask("TestSubtask1", "DescriptionTestSubtask1", Status.NEW, 3);
+        subtask2 = new Subtask("TestSubtask2", "DescriptionTestSubtask2", Status.IN_PROGRESS, 3);
     }
 
     @Test
