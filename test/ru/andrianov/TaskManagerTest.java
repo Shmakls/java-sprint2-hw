@@ -282,4 +282,41 @@ class TaskManagerTest {
 
     }
 
+    @Test
+    void shouldBeUpdateTaskIfGiveEpic() {
+        addFiveTestTasksToTaskManager();
+
+        assertEquals(5, taskManager.getAmountOfStoredTasks());
+
+        Epic updateEpic1 = new Epic("UpdateEpic1", "DescriptionUpdateEpic1", Status.NEW);
+
+        taskManager.updateTask(updateEpic1, 3);
+
+        Epic epicFromRepository = (Epic) taskManager.getTaskById(3);
+
+        assertEquals("UpdateEpic1", epicFromRepository.getTitle());
+    }
+
+    @Test
+    void shouldBeUpdateTaskIfGiveSubtask() {
+        addFiveTestTasksToTaskManager();
+        assertEquals(5, taskManager.getAmountOfStoredTasks());
+        Epic epicBeforeUpdateSubtask = (Epic) taskManager.getTaskById(3);
+
+        assertEquals(Status.IN_PROGRESS, epicBeforeUpdateSubtask.getStatus());
+
+        Subtask updateSubtask2 = new Subtask("UpdateSubtask2", "DescriptionUpdateSubtask2", Status.NEW, 3);
+
+        taskManager.updateTask(updateSubtask2, 5);
+
+        Subtask subtaskFromRepository = (Subtask) taskManager.getTaskById(5);
+
+        assertEquals("UpdateSubtask2", subtaskFromRepository.getTitle());
+
+        Epic epicFromRepository = (Epic) taskManager.getTaskById(3);
+
+        assertEquals(Status.NEW, epicFromRepository.getStatus());
+
+    }
+
 }
