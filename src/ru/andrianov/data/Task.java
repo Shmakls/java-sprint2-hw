@@ -7,19 +7,22 @@ import java.util.Objects;
 
 public class Task {
 
-    private String title;
-    private String description;
-    private Status status;
-    private Integer id;
-    private Type type;
-    private ZonedDateTime startTime;
-    private ZonedDateTime endTime;
-    private Duration estimationTime;
+    protected String title;
+    protected String description;
+    protected Status status;
+    protected Integer id;
+    protected Type type;
+    protected ZonedDateTime startTime;
+    protected ZonedDateTime endTime;
+    protected Duration estimationTime;
 
-    public Task(String title, String description, Status status) {
+    public Task(String title, String description, Status status, ZonedDateTime startTime, Duration estimationTime) {
         this.title = title;
         this.description = description;
         this.status = status;
+        this.startTime = startTime;
+        this.estimationTime = estimationTime;
+        endTime = startTime.plus(estimationTime);
     }
 
     public Integer getId() {
@@ -60,6 +63,30 @@ public class Task {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public ZonedDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(ZonedDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public ZonedDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(ZonedDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public Duration getEstimationTime() {
+        return estimationTime;
+    }
+
+    public void setEstimationTime(Duration estimationTime) {
+        this.estimationTime = estimationTime;
     }
 
     @Override

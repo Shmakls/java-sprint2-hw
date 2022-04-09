@@ -5,6 +5,10 @@ import ru.andrianov.data.Status;
 import ru.andrianov.data.Task;
 import ru.andrianov.data.Type;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,9 +16,18 @@ import static org.junit.jupiter.api.Assertions.*;
 abstract class HistoryRepositoryTest<T extends HistoryRepository> {
 
     T historyRepository;
-    Task task1 = new Task("TestTask1", "DescriptionTestTask1", Status.NEW);
-    Task task2 = new Task("TestTask2", "DescriptionTestTask2", Status.IN_PROGRESS);
-    Task task3 = new Task("TestTask3", "DescriptionTestTask3", Status.IN_PROGRESS);
+    ZoneId zoneId = ZoneId.of("Europe/Moscow");
+    Duration estimationTime = Duration.ofMinutes(15);
+    LocalDateTime localDateTime = LocalDateTime.of(2022, 1, 15, 12, 0);
+    Task task1 = new Task("TestTask1",
+                "DescriptionTestTask1",
+                        Status.NEW, ZonedDateTime.of(localDateTime, zoneId), estimationTime);
+    Task task2 = new Task("TestTask2",
+                "DescriptionTestTask2",
+                        Status.IN_PROGRESS, ZonedDateTime.of(localDateTime.plusMinutes(30), zoneId), estimationTime);
+    Task task3 = new Task("TestTask3",
+                "DescriptionTestTask3",
+                        Status.IN_PROGRESS, ZonedDateTime.of(localDateTime.plusMinutes(60), zoneId), estimationTime);
 
     public HistoryRepositoryTest(T historyRepository) {
         this.historyRepository = historyRepository;

@@ -2,16 +2,19 @@ package ru.andrianov;
 
 import ru.andrianov.hmdata.HistoryRepository;
 import ru.andrianov.data.*;
+import ru.andrianov.operations.CalculationOfTimeValuesForEpic;
 import ru.andrianov.operations.EpicStatus;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import ru.andrianov.operations.StartTimeComparator;
+import ru.andrianov.operations.TasksIntersect;
+
+import java.util.*;
 
 public class TaskManager {
 
-    private TaskRepository taskRepository;
-    private EpicStatus epicStatus;
-    private HistoryRepository historyRepository;
+    private final TaskRepository taskRepository;
+    private final EpicStatus epicStatus;
+    private final HistoryRepository historyRepository;
+    private final TreeSet<Task> sortedByStartTimeTasks = new TreeSet<>(new StartTimeComparator());
 
     public TaskManager(TaskRepository taskRepository, HistoryRepository historyManager) {
         this.taskRepository = taskRepository;
@@ -20,22 +23,30 @@ public class TaskManager {
     }
 
     public Integer createNewTask(Task task) {
-        if (task != null) {
-            Integer taskId = taskRepository.createNewTask(task);
-            if (task instanceof Subtask) {
-                int epicTaskId = ((Subtask) task).getEpicTaskId();
-                Epic epicTask = (Epic) taskRepository.getTaskById(epicTaskId);
-                List<Integer> subtasksIds = epicTask.getSubtasksIds();
-                if (!subtasksIds.contains(taskId)) {
-                    subtasksIds.add(taskId);
-                }
-                epicStatus.checkAndChangeEpicStatus(taskRepository, epicTaskId);
-                task.setId(taskId);
-            }
-            return taskId;
-        } else {
-            return null;
+
+        if (task == null) {
+            throw new IllegalArgumentException("Передана пустая задача");
         }
+
+        if (!(TasksIntersect.canAddTask(taskRepository.getTasks(), task))) {
+            throw new IllegalArgumentException("Новая задача пересекается по времени с существующими");
+        }
+
+        Integer taskId = taskRepository.createNewTask(task);
+        sortedByStartTimeTasks.add(task);
+
+        if (task instanceof Subtask) {
+            int epicTaskId = ((Subtask) task).getEpicTaskId();
+            Epic epicTask = (Epic) taskRepository.getTaskById(epicTaskId);
+            List<Integer> subtasksIds = epicTask.getSubtasksIds();
+            if (!subtasksIds.contains(taskId)) {
+                subtasksIds.add(taskId);
+            }
+            epicStatus.checkAndChangeEpicStatus(taskRepository, epicTaskId);
+            CalculationOfTimeValuesForEpic.checkAndChangeEpicTimeValues(taskRepository, epicTaskId);
+            task.setId(taskId);
+        }
+        return taskId;
     }
 
     public void printAllTasks() {
@@ -59,7 +70,6 @@ public class TaskManager {
     public void clearAllTasks() {
         taskRepository.clearAllTasks();
         historyRepository.clear();
-        System.out.println("Все задачи удалены!");
     }
 
     public Task getTaskById(int taskId) {
@@ -100,10 +110,12 @@ public class TaskManager {
             taskRepository.removeTaskById(taskId);
             System.out.println("Задача \"" + title + "\" удалена!");
 
+            sortedByStartTimeTasks.remove(task);
             historyRepository.removeTaskFromHistoryById(taskId);
 
             if (task instanceof Subtask) {
                 epicStatus.checkAndChangeEpicStatus(taskRepository, epicTaskId);
+                CalculationOfTimeValuesForEpic.checkAndChangeEpicTimeValues(taskRepository, epicTaskId);
             }
         } else {
             throw new IllegalArgumentException("Такого ID в списке нет");
@@ -130,8 +142,12 @@ public class TaskManager {
             }
 
             task.setId(taskId);
+            Task taskForUpdate = taskRepository.getTaskById(taskId);
+            sortedByStartTimeTasks.remove(taskForUpdate);
 
             taskRepository.updateTask(task, taskId);
+            sortedByStartTimeTasks.add(task);
+
             System.out.println("Задача с ID " + taskId + " обновлена.");
 
             if (task instanceof Epic) {
@@ -141,6 +157,7 @@ public class TaskManager {
 
             if (task instanceof Subtask) {
                 epicStatus.checkAndChangeEpicStatus(taskRepository, epicTaskId);
+                CalculationOfTimeValuesForEpic.checkAndChangeEpicTimeValues(taskRepository, epicTaskId);
             }
         } else {
             throw new IllegalArgumentException("Такого ID в списке нет");
@@ -178,6 +195,10 @@ public class TaskManager {
         } else {
             System.out.println("История просмотров пуста");
         }
+    }
+
+    public TreeSet<Task> getPrioritizedTasks() {
+        return sortedByStartTimeTasks;
     }
 
     public Integer getAmountOfStoredTasks() {

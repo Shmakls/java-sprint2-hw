@@ -8,8 +8,13 @@ import ru.andrianov.data.Status;
 import ru.andrianov.data.Subtask;
 import ru.andrianov.data.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,14 +27,31 @@ class TaskManagerTest {
     Task subtask1;
     Task subtask2;
 
+    ZoneId zoneId = ZoneId.of("Europe/Moscow");
+    Duration estimationTime = Duration.ofMinutes(15);
+    LocalDateTime localDateTime = LocalDateTime.of(2022, 1, 15, 12, 0);
+    ZonedDateTime startTimeTask1 = ZonedDateTime.of(localDateTime, zoneId);
+    ZonedDateTime startTimeTask2 = ZonedDateTime.of(localDateTime.plusMinutes(30), zoneId);
+    ZonedDateTime startTimeSubtask1 = ZonedDateTime.of(localDateTime.plusMinutes(60), zoneId);
+    ZonedDateTime startTimeSubtask2 = ZonedDateTime.of(localDateTime.plusMinutes(90), zoneId);
+
     @BeforeEach
     void createNewTaskManager() {
         taskManager = Managers.getTaskManager();
-        task1 = new Task("TestTask1", "DescriptionTestTask1", Status.NEW);
-        task2 = new Task("TestTask2", "DescriptionTestTask2", Status.IN_PROGRESS);
+        taskManager.clearAllTasks();
+        task1 = new Task("TestTask1",
+                "DescriptionTestTask1",
+                        Status.NEW, startTimeTask1, estimationTime);
+        task2 = new Task("TestTask2",
+                "DescriptionTestTask2",
+                        Status.IN_PROGRESS, startTimeTask2, estimationTime);
         epic1 = new Epic("TestEpic1", "DescriptionTestEpic1", Status.NEW);
-        subtask1 = new Subtask("TestSubtask1", "DescriptionTestSubtask1", Status.NEW, 3);
-        subtask2 = new Subtask("TestSubtask2", "DescriptionTestSubtask2", Status.IN_PROGRESS, 3);
+        subtask1 = new Subtask("TestSubtask1",
+                "DescriptionTestSubtask1",
+                        Status.NEW, startTimeSubtask1, estimationTime, 3);
+        subtask2 = new Subtask("TestSubtask2",
+                "DescriptionTestSubtask2",
+                        Status.IN_PROGRESS, startTimeSubtask2, estimationTime, 3);
     }
 
     void addFiveTestTasksToTaskManager() {
@@ -42,8 +64,12 @@ class TaskManagerTest {
 
     @Test
     void shouldBeReturnNullIfTuskNull() {
-        Integer taskId = taskManager.createNewTask(null);
-        assertNull(taskId);
+        final IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> taskManager.createNewTask(null)
+        );
+
+        assertEquals("Передана пустая задача", exception.getMessage());
     }
 
     @Test
@@ -260,7 +286,7 @@ class TaskManagerTest {
 
         assertEquals(5, taskManager.getAmountOfStoredTasks());
 
-        Task updateTask1 = new Task("UpdateTask1", "DescriptionUpdateTask1", Status.NEW);
+        Task updateTask1 = new Task("UpdateTask1", "DescriptionUpdateTask1", Status.NEW, startTimeTask1, estimationTime);
 
         taskManager.updateTask(updateTask1, 1);
 
@@ -293,7 +319,9 @@ class TaskManagerTest {
 
         assertEquals(Status.IN_PROGRESS, epicBeforeUpdateSubtask.getStatus());
 
-        Subtask updateSubtask2 = new Subtask("UpdateSubtask2", "DescriptionUpdateSubtask2", Status.NEW, 3);
+        Subtask updateSubtask2 = new Subtask("UpdateSubtask2",
+                                    "DescriptionUpdateSubtask2",
+                                             Status.NEW, startTimeSubtask2, estimationTime, 3);
 
         taskManager.updateTask(updateSubtask2, 5);
 
@@ -311,7 +339,9 @@ class TaskManagerTest {
     void shouldBeThrowExceptionIfIdIsNotExist() {
         addFiveTestTasksToTaskManager();
 
-        Task updateTask = new Task("UpdateTask1", "DescriptionUpdateTask1", Status.NEW);
+        Task updateTask = new Task("UpdateTask1",
+                "DescriptionUpdateTask1",
+                        Status.NEW, startTimeTask1, estimationTime);
 
         final IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
@@ -354,6 +384,19 @@ class TaskManagerTest {
         );
 
         assertEquals("Такого ID в списке нет", exception.getMessage());
+    }
+
+    @Test
+    void shouldBeReturnSortedPrioritizedTasksList() {
+        addFiveTestTasksToTaskManager();
+
+        assertEquals(5, taskManager.getAmountOfStoredTasks());
+
+        TreeSet<Task> sortedTasks = taskManager.getPrioritizedTasks();
+
+        Task testTask = sortedTasks.first();
+
+        assertEquals(1, testTask.getId());
     }
 
 }

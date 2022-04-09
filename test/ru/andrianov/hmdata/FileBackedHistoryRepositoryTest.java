@@ -12,12 +12,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class FileBackedHistoryRepositoryTest extends HistoryRepositoryTest<FileBackedHistoryRepository> {
 
     public FileBackedHistoryRepositoryTest() {
-        super(new FileBackedHistoryRepository("test\\ru\\andrianov\\HistoryRepository.csv"));
+        super(new FileBackedHistoryRepository("src\\ru\\andrianov\\HistoryRepository.csv"));
     }
 
     @BeforeEach
     void beforeEach() {
-        historyRepository = new FileBackedHistoryRepository("test\\ru\\andrianov\\HistoryRepository.csv");
+        historyRepository = new FileBackedHistoryRepository("src\\ru\\andrianov\\HistoryRepository.csv");
     }
 
     @Test
@@ -28,7 +28,7 @@ class FileBackedHistoryRepositoryTest extends HistoryRepositoryTest<FileBackedHi
         historyRepository.add(task1);
         historyRepository.add(task2);
 
-        FileBackedHistoryRepository testHistoryRepository = new FileBackedHistoryRepository("test\\ru\\andrianov\\HistoryRepository.csv");
+        FileBackedHistoryRepository testHistoryRepository = new FileBackedHistoryRepository("src\\ru\\andrianov\\HistoryRepository.csv");
 
         HistoryRepositoryStorageService.restore(testHistoryRepository);
 

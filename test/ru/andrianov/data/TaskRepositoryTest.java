@@ -3,14 +3,25 @@ package ru.andrianov.data;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 abstract class TaskRepositoryTest<T extends TaskRepository> {
     T taskRepository;
-    Task task1 = new Task("TestTask1", "DescriptionTestTask1", Status.NEW);
-    Task task2 = new Task("TestTask2", "DescriptionTestTask2", Status.IN_PROGRESS);
+    ZoneId zoneId = ZoneId.of("Europe/Moscow");
+    Duration estimationTime = Duration.ofMinutes(15);
+    LocalDateTime localDateTime = LocalDateTime.of(2022, 1, 15, 12, 0);
+    Task task1 = new Task("TestTask1",
+                "DescriptionTestTask1",
+                        Status.NEW, ZonedDateTime.of(localDateTime, zoneId), estimationTime);
+    Task task2 = new Task("TestTask2",
+                "DescriptionTestTask2",
+                        Status.IN_PROGRESS, ZonedDateTime.of(localDateTime.plusMinutes(30), zoneId), estimationTime);
 
     public TaskRepositoryTest(T taskRepository) {
         this.taskRepository = taskRepository;
@@ -76,7 +87,9 @@ abstract class TaskRepositoryTest<T extends TaskRepository> {
         Integer taskId1 = taskRepository.createNewTask(task1);
         Integer taskId2 = taskRepository.createNewTask(task2);
 
-        Task newTask2 = new Task("UpdatedTestTask2", "UpdatesDescriptionTestTask2", Status.NEW);
+        Task newTask2 = new Task("UpdatedTestTask2",
+                    "UpdatesDescriptionTestTask2",
+                        Status.NEW, ZonedDateTime.of(localDateTime.plusMinutes(30), zoneId), estimationTime);
 
         taskRepository.updateTask(newTask2, taskId2);
 

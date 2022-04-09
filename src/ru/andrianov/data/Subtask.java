@@ -1,12 +1,16 @@
 package ru.andrianov.data;
 
+import java.time.Duration;
+import java.time.ZonedDateTime;
+
 public class Subtask extends Task {
 
     private int epicTaskId;
 
-    public Subtask(String title, String description, Status status, int epicTaskId) {
-        super(title, description, status);
+    public Subtask(String title, String description, Status status, ZonedDateTime startTime, Duration estimationTime, int epicTaskId) {
+        super(title, description, status, startTime, estimationTime);
         this.epicTaskId = epicTaskId;
+        endTime = startTime.plus(estimationTime);
     }
 
     public int getEpicTaskId() {

@@ -10,22 +10,32 @@ import ru.andrianov.data.Task;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class TaskManagerPrintsMethodTest {
 
     private ByteArrayOutputStream output = new ByteArrayOutputStream();
     private TaskManager taskManager;
+    ZoneId zoneId = ZoneId.of("Europe/Moscow");
+    Duration estimationTime = Duration.ofMinutes(15);
+    LocalDateTime localDateTime = LocalDateTime.of(2022, 1, 15, 12, 0);
 
     @BeforeEach
     public void setUpStreams() {
         System.setOut(new PrintStream(output));
         taskManager = Managers.getTaskManager();
+        taskManager.clearAllTasks();
     }
 
     @Test
     public void testPrintAllTasksMethodWithTask() {
         taskManager.createNewTask(
-                new Task("TestTask1", "DescriptionTestTask1", Status.NEW));
+                new Task("TestTask1",
+                        "DescriptionTestTask1",
+                        Status.NEW, ZonedDateTime.of(localDateTime, zoneId), estimationTime));
         taskManager.printAllTasks();
         Assertions.assertEquals("\r\n"
                 + "Вывожу список всех задач:"
@@ -45,9 +55,13 @@ public class TaskManagerPrintsMethodTest {
     @Test
     public void testPrintHistoryWithTasks() {
         taskManager.createNewTask(
-                new Task("TestTask1", "DescriptionTestTask1", Status.NEW));
+                new Task("TestTask1",
+                        "DescriptionTestTask1",
+                        Status.NEW, ZonedDateTime.of(localDateTime,zoneId), estimationTime));
         taskManager.createNewTask(
-                new Epic("TestTask1", "DescriptionTestTask1", Status.NEW));
+                new Epic("TestTask1",
+                        "DescriptionTestTask1",
+                        Status.NEW));
         taskManager.getTaskById(1);
         taskManager.getTaskById(2);
 

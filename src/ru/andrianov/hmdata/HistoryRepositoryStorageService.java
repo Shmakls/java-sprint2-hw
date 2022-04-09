@@ -14,7 +14,7 @@ public class HistoryRepositoryStorageService {
 
     public static void save(FileBackedHistoryRepository historyRepository) {
 
-        String fileTitle = "id,type,name,status,description,epic\n";
+        String fileTitle = "id,type,name,status,description,startTime,estimationTime,epic\n";
         try (Writer fileWriter = new FileWriter(historyRepository.filePath)) {
             fileWriter.write(fileTitle);
             if (historyRepository.getHistory() != null) {

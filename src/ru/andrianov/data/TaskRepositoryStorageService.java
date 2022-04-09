@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,7 @@ public class TaskRepositoryStorageService {
 
     public static void save(FileBackedTasksRepository tasksRepository) {
 
-        String fileTitle = "id,type,name,status,description,epic\n";
+        String fileTitle = "id,type,name,status,description,startTime,estimationTime,epic\n";
         try (Writer fileWriter = new FileWriter(tasksRepository.filePath)) {
             fileWriter.write(fileTitle);
             for (Integer taskId : tasksRepository.tasks.keySet()) {
@@ -55,7 +57,7 @@ public class TaskRepositoryStorageService {
 
         StringBuilder taskString = new StringBuilder((task.getId() + "," + type.currency + ","
                 + task.getTitle() + "," + task.getStatus().currency + ","
-                + task.getDescription()));
+                + task.getDescription() + "," + task.getStartTime() + "," + task.getEstimationTime().toSeconds()));
 
         if (task instanceof Subtask) {
             taskString.append(",");
@@ -83,16 +85,18 @@ public class TaskRepositoryStorageService {
         String title = fromString[2];
         Status status = Status.getStatusByString(fromString[3]);
         String description = fromString[4];
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse(fromString[5]);
+        Duration duration = Duration.ofSeconds(Long.parseLong(fromString[6]));
 
         if (fromString[1].equals("SUBTASK")) {
-            int epicId = Integer.parseInt(fromString[5]);
-            Subtask task = new Subtask(title, description, status, epicId);
+            int epicId = Integer.parseInt(fromString[7]);
+            Subtask task = new Subtask(title, description, status, zonedDateTime, duration, epicId);
             task.setType(type);
             task.setId(taskId);
             return task;
         } else if (fromString[1].equals("EPIC")) {
             List<Integer> subtasksId = new ArrayList<>();
-            for (int i = 5; i < fromString.length; i ++) {
+            for (int i = 7; i < fromString.length; i ++) {
                 subtasksId.add(Integer.parseInt(fromString[i]));
             }
             Epic task = new Epic(title, description, status);
@@ -101,7 +105,7 @@ public class TaskRepositoryStorageService {
             task.setType(type);
             return task;
         } else {
-            Task task = new Task(title, description, status);
+            Task task = new Task(title, description, status, zonedDateTime, duration);
             task.setId(taskId);
             task.setType(type);
             return task;

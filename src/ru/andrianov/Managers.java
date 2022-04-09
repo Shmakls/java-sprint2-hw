@@ -15,7 +15,7 @@ public class Managers {
     }
 
     // Конфигурация для подключения файловых репозиториев
-     /* private static TaskRepository getTaskRepository() {
+    /* private static TaskRepository getTaskRepository() {
         FileBackedTasksRepository fileBackedTasksRepository = new FileBackedTasksRepository("src\\ru\\andrianov\\TaskRepository.csv");
         TaskRepositoryStorageService.restore(fileBackedTasksRepository);
         return fileBackedTasksRepository;
@@ -26,6 +26,8 @@ public class Managers {
         HistoryRepositoryStorageService.restore(fileBackedHistoryRepository);
         return fileBackedHistoryRepository;
     } */
+
+
 
     // Конфигурация для подключения InMemory репозиториев
     private static TaskRepository getTaskRepository() {
@@ -39,4 +41,5 @@ public class Managers {
     public static TaskManager getTaskManager() {
         return new TaskManager(getTaskRepository(), getHistoryRepository());
     }
+
 }

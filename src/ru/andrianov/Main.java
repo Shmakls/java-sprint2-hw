@@ -14,7 +14,7 @@ public class Main {
 
         // 1. Заполнение менеджера и провека его работы
 
-        TaskManager taskManager = Managers.getTaskManager();
+        /* TaskManager taskManager = Managers.getTaskManager();
 
         test1(taskManager);                             // Создаём 7 новых задач.
 
@@ -71,7 +71,7 @@ public class Main {
 
         }
 
-        public static void test1(TaskManager taskManager) {
+        /* public static void test1(TaskManager taskManager) {
             taskManager.createNewTask(new Epic("Сделать ремонт",
                     "Привести квартиру в жилоподный вид",
                     Status.NEW));
@@ -119,6 +119,6 @@ public class Main {
                     "А нехер шуметь по ночам",
                     Status.DONE), 7);
 
-        }
+        } */
 
 }
