@@ -7,12 +7,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-    /*
-    Все проверил, убрал обработку исключения, перенаследовал его от Error вместо Exception.
-    Убрал ошибку NullPoint, добавил проверку на null.
-    */
-
-        // 1. Заполнение менеджера и провека его работы
+        // 1. Заполнение менеджера и проверка его работы
 
         /* TaskManager taskManager = Managers.getTaskManager();
 
