@@ -32,9 +32,6 @@ public class TaskManager {
                 epicStatus.checkAndChangeEpicStatus(taskRepository, epicTaskId);
                 task.setId(taskId);
             }
-            System.out.println("Новая задача создана. ID - " + taskId
-                    + ", название: " + task.getTitle()
-                    + ", описание: " + task.getDescription() + ".");
             return taskId;
         } else {
             return null;
@@ -116,6 +113,11 @@ public class TaskManager {
 
     public void updateTask(Task task, int taskId) {
 
+        if (task == null) {
+            throw new IllegalArgumentException("Передана пустая задача.");
+        }
+
+        if (taskRepository.getTasks().containsKey(taskId)) {
             int epicTaskId = 0;
             List<Integer> subtasksIds = null;
 
@@ -140,21 +142,28 @@ public class TaskManager {
             if (task instanceof Subtask) {
                 epicStatus.checkAndChangeEpicStatus(taskRepository, epicTaskId);
             }
+        } else {
+            throw new IllegalArgumentException("Такого ID в списке нет");
+        }
     }
 
-    public void getSubtaskListByEpic(int epicId) {
+    public List<Integer> getSubtaskListByEpic(int epicId) {
 
-        Epic epic = (Epic) taskRepository.getTaskById(epicId);
-        String epicTitle = epic.getTitle();
-        List<Integer> subtasksIds = epic.getSubtasksIds();
+        if (taskRepository.getTasks().containsKey(epicId)) {
+            Epic epic = (Epic) taskRepository.getTaskById(epicId);
+            List<Integer> subtasksIds = epic.getSubtasksIds();
 
-        System.out.println("Для epic задачи " + epicTitle + " имеются следующие подзадачи: ");
-        for (Integer subtaskId : subtasksIds) {
-            Subtask subtask = (Subtask) taskRepository.getTaskById(subtaskId);
-            System.out.println("ID: " + subtaskId
-                    + ", название: " + subtask.getTitle()
-                    + ", описание: " + subtask.getDescription()
-                    + ", статус: " + subtask.getStatus());
+            System.out.println("Для epic задачи " + epic.getTitle() + " имеются следующие подзадачи: ");
+            for (Integer subtaskId : subtasksIds) {
+                Subtask subtask = (Subtask) taskRepository.getTaskById(subtaskId);
+                System.out.println("ID: " + subtaskId
+                        + ", название: " + subtask.getTitle()
+                        + ", описание: " + subtask.getDescription()
+                        + ", статус: " + subtask.getStatus());
+            }
+            return subtasksIds;
+        } else {
+            throw new IllegalArgumentException("Такого ID в списке нет");
         }
     }
 

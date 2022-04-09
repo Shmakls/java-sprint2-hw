@@ -8,6 +8,7 @@ import ru.andrianov.data.Status;
 import ru.andrianov.data.Subtask;
 import ru.andrianov.data.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -110,19 +111,6 @@ class TaskManagerTest {
         Status epicTestStatusDone = epicFromRepository.getStatus();
 
         assertEquals(Status.DONE, epicTestStatusDone);
-
-    }
-
-    @Test
-    void shouldBePrintTaskListWithFiveTasks() {
-        addFiveTestTasksToTaskManager();
-
-        assertEquals(5, taskManager.getAmountOfStoredTasks());
-
-        taskManager.printAllTasks();
-
-        ;
-
 
     }
 
@@ -298,7 +286,7 @@ class TaskManagerTest {
     }
 
     @Test
-    void shouldBeUpdateTaskIfGiveSubtask() {
+    void shouldBeUpdateTaskAndChangeEpicStatusIfGiveSubtask() {
         addFiveTestTasksToTaskManager();
         assertEquals(5, taskManager.getAmountOfStoredTasks());
         Epic epicBeforeUpdateSubtask = (Epic) taskManager.getTaskById(3);
@@ -317,6 +305,55 @@ class TaskManagerTest {
 
         assertEquals(Status.NEW, epicFromRepository.getStatus());
 
+    }
+
+    @Test
+    void shouldBeThrowExceptionIfIdIsNotExist() {
+        addFiveTestTasksToTaskManager();
+
+        Task updateTask = new Task("UpdateTask1", "DescriptionUpdateTask1", Status.NEW);
+
+        final IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> taskManager.updateTask(updateTask, 10)
+        );
+
+        assertEquals("Такого ID в списке нет", exception.getMessage());
+    }
+
+    @Test
+    void shouldBeThrowExceptionIfTaskIsNull() {
+        addFiveTestTasksToTaskManager();
+
+        final IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> taskManager.updateTask(null, 1)
+        );
+
+        assertEquals("Передана пустая задача.", exception.getMessage());
+    }
+
+    @Test
+    void shouldBeReturnSubtasksIdsIfIdIsExist() {
+        addFiveTestTasksToTaskManager();
+
+        List<Integer> subtasksIds = taskManager.getSubtaskListByEpic(3);
+
+        List<Integer> trueList = List.of(4, 5);
+
+        assertArrayEquals(trueList.toArray(), subtasksIds.toArray());
+    }
+
+    @Test
+    void shouldBeThrowExceptionIfEpicIdIncorrect() {
+        addFiveTestTasksToTaskManager();
+
+        final IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> taskManager.getSubtaskListByEpic(10)
+        );
+
+        assertEquals("Такого ID в списке нет", exception.getMessage());
     }
 
 }

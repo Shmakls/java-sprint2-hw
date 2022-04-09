@@ -2,6 +2,7 @@ package ru.andrianov.data;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -11,7 +12,8 @@ public class Task {
     private Status status;
     private Integer id;
     private Type type;
-    private LocalDateTime startTime;
+    private ZonedDateTime startTime;
+    private ZonedDateTime endTime;
     private Duration estimationTime;
 
     public Task(String title, String description, Status status) {
