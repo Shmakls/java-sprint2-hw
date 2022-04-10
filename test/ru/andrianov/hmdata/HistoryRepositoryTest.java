@@ -1,5 +1,6 @@
 package ru.andrianov.hmdata;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.andrianov.data.Status;
 import ru.andrianov.data.Task;
@@ -16,21 +17,27 @@ import static org.junit.jupiter.api.Assertions.*;
 abstract class HistoryRepositoryTest<T extends HistoryRepository> {
 
     T historyRepository;
-    ZoneId zoneId = ZoneId.of("Europe/Moscow");
-    Duration estimationTime = Duration.ofMinutes(15);
-    LocalDateTime localDateTime = LocalDateTime.of(2022, 1, 15, 12, 0);
-    Task task1 = new Task("TestTask1",
-                "DescriptionTestTask1",
-                        Status.NEW, ZonedDateTime.of(localDateTime, zoneId), estimationTime);
-    Task task2 = new Task("TestTask2",
-                "DescriptionTestTask2",
-                        Status.IN_PROGRESS, ZonedDateTime.of(localDateTime.plusMinutes(30), zoneId), estimationTime);
-    Task task3 = new Task("TestTask3",
-                "DescriptionTestTask3",
-                        Status.IN_PROGRESS, ZonedDateTime.of(localDateTime.plusMinutes(60), zoneId), estimationTime);
+    ZoneId zoneId;
+    Duration estimationTime;
+    LocalDateTime localDateTime;
+    Task task1;
+    Task task2;
+    Task task3;
 
-    public HistoryRepositoryTest(T historyRepository) {
-        this.historyRepository = historyRepository;
+    @BeforeEach
+    void historyRepositoryInitialization() {
+        zoneId = ZoneId.of("Europe/Moscow");
+        estimationTime = Duration.ofMinutes(15);
+        localDateTime = LocalDateTime.of(2022, 1, 15, 12, 0);
+        task1 = new Task("TestTask1",
+                "DescriptionTestTask1",
+                Status.NEW, ZonedDateTime.of(localDateTime, zoneId), estimationTime);
+        task2 = new Task("TestTask2",
+                "DescriptionTestTask2",
+                Status.IN_PROGRESS, ZonedDateTime.of(localDateTime.plusMinutes(30), zoneId), estimationTime);
+        task3 = new Task("TestTask3",
+                "DescriptionTestTask3",
+                Status.IN_PROGRESS, ZonedDateTime.of(localDateTime.plusMinutes(60), zoneId), estimationTime);
         task1.setId(1);
         task1.setType(Type.TASK);
         task2.setId(2);

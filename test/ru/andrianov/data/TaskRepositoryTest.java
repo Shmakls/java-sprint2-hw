@@ -13,18 +13,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 abstract class TaskRepositoryTest<T extends TaskRepository> {
     T taskRepository;
-    ZoneId zoneId = ZoneId.of("Europe/Moscow");
-    Duration estimationTime = Duration.ofMinutes(15);
-    LocalDateTime localDateTime = LocalDateTime.of(2022, 1, 15, 12, 0);
-    Task task1 = new Task("TestTask1",
-                "DescriptionTestTask1",
-                        Status.NEW, ZonedDateTime.of(localDateTime, zoneId), estimationTime);
-    Task task2 = new Task("TestTask2",
-                "DescriptionTestTask2",
-                        Status.IN_PROGRESS, ZonedDateTime.of(localDateTime.plusMinutes(30), zoneId), estimationTime);
+    Task task1;
+    Task task2;
+    ZoneId zoneId;
+    LocalDateTime localDateTime;
+    Duration estimationTime;
 
-    public TaskRepositoryTest(T taskRepository) {
-        this.taskRepository = taskRepository;
+    @BeforeEach
+    void taskRepositoryInitialization() {
+        zoneId = ZoneId.of("Europe/Moscow");
+        estimationTime = Duration.ofMinutes(15);
+        localDateTime = LocalDateTime.of(2022, 1, 15, 12, 0);
+        task1 = new Task("TestTask1",
+                "DescriptionTestTask1",
+                Status.NEW, ZonedDateTime.of(localDateTime, zoneId), estimationTime);
+        task2 = new Task("TestTask2",
+                "DescriptionTestTask2",
+                Status.IN_PROGRESS, ZonedDateTime.of(localDateTime.plusMinutes(30), zoneId), estimationTime);
     }
 
     @Test

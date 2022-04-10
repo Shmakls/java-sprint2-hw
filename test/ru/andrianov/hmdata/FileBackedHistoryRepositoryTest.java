@@ -11,10 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackedHistoryRepositoryTest extends HistoryRepositoryTest<FileBackedHistoryRepository> {
 
-    public FileBackedHistoryRepositoryTest() {
-        super(new FileBackedHistoryRepository("src\\ru\\andrianov\\HistoryRepository.csv"));
-    }
-
     @BeforeEach
     void beforeEach() {
         historyRepository = new FileBackedHistoryRepository("src\\ru\\andrianov\\HistoryRepository.csv");

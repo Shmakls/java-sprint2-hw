@@ -392,7 +392,7 @@ class TaskManagerTest {
 
         assertEquals(5, taskManager.getAmountOfStoredTasks());
 
-        TreeSet<Task> sortedTasks = taskManager.getPrioritizedTasks();
+        TreeSet<Task> sortedTasks = (TreeSet<Task>) taskManager.getPrioritizedTasks();
 
         Task testTask = sortedTasks.first();
 

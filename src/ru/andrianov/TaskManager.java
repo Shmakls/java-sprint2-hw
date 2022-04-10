@@ -5,8 +5,8 @@ import ru.andrianov.data.*;
 import ru.andrianov.operations.CalculationOfTimeValuesForEpic;
 import ru.andrianov.operations.EpicStatus;
 import ru.andrianov.operations.StartTimeComparator;
-import ru.andrianov.operations.TasksIntersect;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 
 public class TaskManager {
@@ -14,7 +14,7 @@ public class TaskManager {
     private final TaskRepository taskRepository;
     private final EpicStatus epicStatus;
     private final HistoryRepository historyRepository;
-    private final TreeSet<Task> sortedByStartTimeTasks = new TreeSet<>(new StartTimeComparator());
+    private final Set<Task> sortedByStartTimeTasks = new TreeSet<>(new StartTimeComparator());
 
     public TaskManager(TaskRepository taskRepository, HistoryRepository historyManager) {
         this.taskRepository = taskRepository;
@@ -28,7 +28,7 @@ public class TaskManager {
             throw new IllegalArgumentException("Передана пустая задача");
         }
 
-        if (!(TasksIntersect.canAddTask(taskRepository.getTasks(), task))) {
+        if (!(canAddTask(taskRepository.getTasks(), task))) {
             throw new IllegalArgumentException("Новая задача пересекается по времени с существующими");
         }
 
@@ -197,7 +197,7 @@ public class TaskManager {
         }
     }
 
-    public TreeSet<Task> getPrioritizedTasks() {
+    public Set<Task> getPrioritizedTasks() {
         return sortedByStartTimeTasks;
     }
 
@@ -212,5 +212,31 @@ public class TaskManager {
             return 0;
         }
     }
+
+    private boolean doesTasksIntersect(Task task1, Task task2) {
+
+        ZonedDateTime begin1 = task1.getStartTime();
+        ZonedDateTime end1 = task1.getEndTime();
+        ZonedDateTime begin2 = task2.getStartTime();
+        ZonedDateTime end2 = task2.getEndTime();
+
+        // проверяем что начало 2-й задачи лежит в интервале первой или конец 2-й задачи лежит в интервале первой
+        if (begin1.isBefore(begin2) && end1.isAfter(begin2) || begin1.isBefore(end2) && end1.isAfter(end2)) {
+            return true;
+            // проверяем что начало 1-й задачи лежит в интервале второй или конец 1-й задачи лежит в интервале второй
+        } else if (begin2.isBefore(begin1) && end2.isAfter(begin1) || begin2.isBefore(end2) && end2.isAfter(end2)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean canAddTask(Map<Integer, Task> tasks, Task task) {
+
+        List<Task> tasksList = new ArrayList<>(tasks.values());
+        return tasksList.stream()
+                .noneMatch(existingTask -> doesTasksIntersect(existingTask, task));
+    }
+
 }
 
