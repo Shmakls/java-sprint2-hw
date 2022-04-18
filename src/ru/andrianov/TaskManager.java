@@ -67,6 +67,10 @@ public class TaskManager {
         System.out.println("");
     }
 
+    public Map<Integer, Task> getAllTasks() {
+        return taskRepository.getTasks();
+    }
+
     public void clearAllTasks() {
         taskRepository.clearAllTasks();
         historyRepository.clear();
@@ -195,6 +199,10 @@ public class TaskManager {
         } else {
             System.out.println("История просмотров пуста");
         }
+    }
+
+    public Collection<Task> getHistory() {
+        return historyRepository.getHistory();
     }
 
     public Set<Task> getPrioritizedTasks() {
