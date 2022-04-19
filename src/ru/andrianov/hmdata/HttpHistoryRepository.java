@@ -46,7 +46,7 @@ public class HttpHistoryRepository implements HistoryRepository {
             nodeWithId.put(taskId, node);
         }
         String json = gson.toJson(viewedTasks.getTasks());
-        kvTaskClient.put("history-" + API_KEY, json);
+        kvTaskClient.put("history", json);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class HttpHistoryRepository implements HistoryRepository {
             nodeWithId.remove(taskId);
         }
         String json = gson.toJson(viewedTasks.getTasks());
-        kvTaskClient.put("history-" + API_KEY, json);
+        kvTaskClient.put("history", json);
     }
 
     @Override
@@ -70,6 +70,6 @@ public class HttpHistoryRepository implements HistoryRepository {
         nodeWithId.clear();
         viewedTasks.clear();
         String json = gson.toJson(viewedTasks.getTasks());
-        kvTaskClient.put("history-" + API_KEY, json);
+        kvTaskClient.put("history", json);
     }
 }

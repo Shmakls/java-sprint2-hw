@@ -12,7 +12,7 @@ import java.util.Map;
  * Постман: https://www.getpostman.com/collections/a83b61d9e1c81c10575c
  */
 public class KVServer {
-    public static final int PORT = 8080;
+    public static final int PORT = 8078;
     private final String API_KEY;
     private HttpServer server;
     private Map<String, String> data = new HashMap<>();
@@ -79,8 +79,20 @@ public class KVServer {
                 }
                 switch (h.getRequestMethod()) {
                     case "GET":
-
+                        String key = h.getRequestURI().getPath().substring("/load/".length());
+                        if (key.isEmpty()) {
+                            System.out.println("Key для загрузки пустой. key указывается в пути: /load/{key}");
+                            h.sendResponseHeaders(400, 0);
+                            return;
+                        }
+                        sendText(h, data.get(key));
+                        break;
+                    default:
+                        System.out.println("/load ждёт GET-запрос, а получил " + h.getRequestMethod());
+                        h.sendResponseHeaders(405, 0);
                 }
+            } finally {
+                h.close();
             }
             // TODO Добавьте получение значения по ключу
         });

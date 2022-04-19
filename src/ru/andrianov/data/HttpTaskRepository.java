@@ -34,7 +34,7 @@ public class HttpTaskRepository implements TaskRepository {
         task.setType(TaskRepositoryStorageService.findTypeTask(task));
         tasks.put(task.getId(), task);
         String json = gson.toJson(tasks);
-        kvTaskClient.put("tasks-" + API_KEY, json);
+        kvTaskClient.put("tasks", json);
         return idCounter;
     }
 
@@ -42,7 +42,7 @@ public class HttpTaskRepository implements TaskRepository {
     public void clearAllTasks() {
         tasks.clear();
         String json = gson.toJson(tasks);
-        kvTaskClient.put("tasks-" + API_KEY, json);
+        kvTaskClient.put("tasks", json);
     }
 
     @Override
@@ -54,14 +54,14 @@ public class HttpTaskRepository implements TaskRepository {
     public void removeTaskById(Integer taskId) {
         tasks.remove(taskId);
         String json = gson.toJson(tasks);
-        kvTaskClient.put("tasks-" + API_KEY, json);
+        kvTaskClient.put("tasks", json);
     }
 
     @Override
     public void updateTask(Task task, Integer taskId) {
         tasks.put(taskId, task);
         String json = gson.toJson(tasks);
-        kvTaskClient.put("tasks-" + API_KEY, json);
+        kvTaskClient.put("tasks", json);
     }
 
     public String getAPI_KEY() {

@@ -12,7 +12,6 @@ public class Main {
 
         new KVServer().start();
 
-        TaskManager taskManager = Managers.getTaskManager();
 
     }
 }
