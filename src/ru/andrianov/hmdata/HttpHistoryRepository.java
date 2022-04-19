@@ -1,6 +1,8 @@
 package ru.andrianov.hmdata;
 
+import com.google.gson.Gson;
 import ru.andrianov.data.Task;
+import ru.andrianov.server.KVTaskClient;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,15 +11,26 @@ import java.util.Map;
 public class HttpHistoryRepository implements HistoryRepository {
 
     private final String url;
-    private String key;
+    private String API_KEY;
     private HomeLinkedList viewedTasks;
     private Map<Integer, Node> nodeWithId;
+    private KVTaskClient kvTaskClient;
+    Gson gson;
 
-    public HttpHistoryRepository(String url, String key) {
+    public HttpHistoryRepository(String url) {
         this.url = url;
-        this.key = key;
         viewedTasks = new HomeLinkedList();
         nodeWithId = new HashMap<>();
+        kvTaskClient = new KVTaskClient(this.url);
+        gson = new Gson();
+    }
+
+    public String getAPI_KEY() {
+        return API_KEY;
+    }
+
+    public void setAPI_KEY(String API_KEY) {
+        this.API_KEY = API_KEY;
     }
 
     @Override
@@ -32,21 +45,31 @@ public class HttpHistoryRepository implements HistoryRepository {
             Node node = viewedTasks.linkLast(task);
             nodeWithId.put(taskId, node);
         }
-        HistoryRepositoryStorageService.save(this);
+        String json = gson.toJson(viewedTasks.getTasks());
+        kvTaskClient.put("history-" + API_KEY, json);
     }
 
     @Override
     public Collection<Task> getHistory() {
-        return null;
+        return viewedTasks.getTasks();
     }
 
     @Override
     public void removeTaskFromHistoryById(Integer taskId) {
-
+        if (nodeWithId.containsKey(taskId)) {
+            Node node = nodeWithId.get(taskId);
+            viewedTasks.removeNode(node);
+            nodeWithId.remove(taskId);
+        }
+        String json = gson.toJson(viewedTasks.getTasks());
+        kvTaskClient.put("history-" + API_KEY, json);
     }
 
     @Override
     public void clear() {
-
+        nodeWithId.clear();
+        viewedTasks.clear();
+        String json = gson.toJson(viewedTasks.getTasks());
+        kvTaskClient.put("history-" + API_KEY, json);
     }
 }

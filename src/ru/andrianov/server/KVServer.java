@@ -12,7 +12,7 @@ import java.util.Map;
  * Постман: https://www.getpostman.com/collections/a83b61d9e1c81c10575c
  */
 public class KVServer {
-    public static final int PORT = 8078;
+    public static final int PORT = 8080;
     private final String API_KEY;
     private HttpServer server;
     private Map<String, String> data = new HashMap<>();
@@ -70,6 +70,18 @@ public class KVServer {
             }
         });
         server.createContext("/load", (h) -> {
+            try {
+                System.out.println("\n/load");
+                if (!hasAuth(h)) {
+                    System.out.println("Запрос неавторизован, нужен параметр в query API_KEY со значением апи-ключа");
+                    h.sendResponseHeaders(403, 0);
+                    return;
+                }
+                switch (h.getRequestMethod()) {
+                    case "GET":
+
+                }
+            }
             // TODO Добавьте получение значения по ключу
         });
     }

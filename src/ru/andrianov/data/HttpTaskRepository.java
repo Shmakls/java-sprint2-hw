@@ -9,16 +9,15 @@ import java.util.Map;
 public class HttpTaskRepository implements TaskRepository {
 
     private final String url;
-    private String key;
+    private String API_KEY;
     private final KVTaskClient kvTaskClient;
     private HashMap<Integer, Task> tasks;
     private Integer idCounter;
     Gson gson;
 
-    public HttpTaskRepository(String url, String key) {
+    public HttpTaskRepository(String url) {
         this.url = url;
-        this.key = key;
-        kvTaskClient = new KVTaskClient(url);
+        kvTaskClient = new KVTaskClient(this.url);
         tasks = new HashMap<>();
         idCounter = 0;
         gson = new Gson();
@@ -35,7 +34,7 @@ public class HttpTaskRepository implements TaskRepository {
         task.setType(TaskRepositoryStorageService.findTypeTask(task));
         tasks.put(task.getId(), task);
         String json = gson.toJson(tasks);
-        kvTaskClient.put(key, json);
+        kvTaskClient.put("tasks-" + API_KEY, json);
         return idCounter;
     }
 
@@ -43,7 +42,7 @@ public class HttpTaskRepository implements TaskRepository {
     public void clearAllTasks() {
         tasks.clear();
         String json = gson.toJson(tasks);
-        kvTaskClient.put(key, json);
+        kvTaskClient.put("tasks-" + API_KEY, json);
     }
 
     @Override
@@ -55,13 +54,21 @@ public class HttpTaskRepository implements TaskRepository {
     public void removeTaskById(Integer taskId) {
         tasks.remove(taskId);
         String json = gson.toJson(tasks);
-        kvTaskClient.put(key, json);
+        kvTaskClient.put("tasks-" + API_KEY, json);
     }
 
     @Override
     public void updateTask(Task task, Integer taskId) {
         tasks.put(taskId, task);
         String json = gson.toJson(tasks);
-        kvTaskClient.put(key, json);
+        kvTaskClient.put("tasks-" + API_KEY, json);
+    }
+
+    public String getAPI_KEY() {
+        return API_KEY;
+    }
+
+    public void setAPI_KEY(String API_KEY) {
+        this.API_KEY = API_KEY;
     }
 }
