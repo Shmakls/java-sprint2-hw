@@ -1,9 +1,10 @@
-package ru.andrianov;
+package ru.andrianov.server;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import ru.andrianov.TaskManager;
 import ru.andrianov.data.Task;
 
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class HttpTaskServer {
                h.close();
            }
         });
-        httpServer.createContext("tasks/prioritizedTask", (h) -> {
+        httpServer.createContext("/tasks/prioritizedTask", (h) -> {
             try {
                 switch (h.getRequestMethod()) {
                     case "GET":
@@ -107,15 +108,21 @@ public class HttpTaskServer {
 
         @Override
         public void handle(HttpExchange h) throws IOException {
-
+        try {
             switch (h.getRequestMethod()) {
                 case "GET":
-                    String getId = h.getRequestURI().getPath().substring("/task/".length());
+                    String getId = h.getRequestURI().getPath().substring("/tasks/task/".length());
 
                     if (getId.isEmpty()) {
                         sendText(h, gson.toJson(taskManager.getAllTasks()));
                     } else {
-                        sendText(h, gson.toJson(taskManager.getTaskById(Integer.parseInt(getId))));
+                        try {
+                            sendText(h, gson.toJson(taskManager.getTaskById(Integer.parseInt(getId))));
+                        } catch (IllegalArgumentException e) {
+                            System.out.println(e.getMessage());
+                            h.sendResponseHeaders(400, 0);
+                            return;
+                        }
                     }
                     break;
 
@@ -162,6 +169,10 @@ public class HttpTaskServer {
                     h.sendResponseHeaders(405, 0);
 
             }
+
+        } finally {
+            h.close();
+        }
 
         }
 

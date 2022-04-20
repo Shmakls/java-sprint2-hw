@@ -24,7 +24,7 @@ public class KVTaskClient {
         String compositeKey = typeKey + "_" + key;
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(serverUrl + "/save/" + compositeKey))
+                .uri(URI.create(serverUrl + "/save/" + compositeKey + "?API_KEY=" + key))
                 .POST(body)
                 .build();
 
@@ -43,7 +43,7 @@ public class KVTaskClient {
         String response = "";
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(serverUrl + "/load/" + compositeKey + "?API_KEY=" + compositeKey))
+                .uri(URI.create(serverUrl + "/load/" + compositeKey + "?API_KEY=" + key))
                 .build();
 
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();
@@ -65,6 +65,8 @@ public class KVTaskClient {
         HttpRequest httpRequest = HttpRequest.newBuilder()
                                 .GET()
                                 .uri(URI.create(serverUrl + "/register"))
+                                .version(HttpClient.Version.HTTP_1_1)
+                                .header("Accept", "text/html")
                                 .build();
 
         HttpResponse.BodyHandler<String> handler = HttpResponse.BodyHandlers.ofString();

@@ -1,19 +1,21 @@
-package ru.andrianov.data;
+package ru.andrianov.hmdata;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import ru.andrianov.data.HttpTaskRepository;
 import ru.andrianov.server.KVServer;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class HttpTaskRepositoryTest extends TaskRepositoryTest<HttpTaskRepository> {
+class HttpHistoryRepositoryTest extends HistoryRepositoryTest<HttpHistoryRepository> {
 
     KVServer kvServer;
 
     @BeforeEach
     void beforeEach() {
+
         try {
             kvServer = new KVServer();
             kvServer.start();
@@ -21,12 +23,13 @@ class HttpTaskRepositoryTest extends TaskRepositoryTest<HttpTaskRepository> {
             System.out.println("Произошла ошибка при запуске сервера.");
             e.printStackTrace();
         }
-        taskRepository = new HttpTaskRepository("http://localhost:8078");
+        historyRepository = new HttpHistoryRepository("http://localhost:8078");
     }
 
     @AfterEach
     void afterEach() {
         kvServer.stop();
     }
+
 
 }
