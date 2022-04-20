@@ -10,11 +10,11 @@ public class Managers {
 
     // Конфигурация для подключения Http-репозиториев
     private static TaskRepository getTaskRepository() {
-        return new HttpTaskRepository("http://localhost:8080");
+        return new HttpTaskRepository("http://localhost:8078");
     }
 
     private static HistoryRepository getHistoryRepository() {
-        return new HttpHistoryRepository("http://localhost:8080");
+        return new HttpHistoryRepository("http://localhost:8078");
     }
 
     // Конфигурация для подключения файловых репозиториев

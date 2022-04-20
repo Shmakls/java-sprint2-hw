@@ -11,7 +11,7 @@ import java.util.Map;
 public class HttpHistoryRepository implements HistoryRepository {
 
     private final String url;
-    private String API_KEY;
+
     private HomeLinkedList viewedTasks;
     private Map<Integer, Node> nodeWithId;
     private KVTaskClient kvTaskClient;
@@ -23,14 +23,6 @@ public class HttpHistoryRepository implements HistoryRepository {
         nodeWithId = new HashMap<>();
         kvTaskClient = new KVTaskClient(this.url);
         gson = new Gson();
-    }
-
-    public String getAPI_KEY() {
-        return API_KEY;
-    }
-
-    public void setAPI_KEY(String API_KEY) {
-        this.API_KEY = API_KEY;
     }
 
     @Override

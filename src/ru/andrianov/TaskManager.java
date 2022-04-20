@@ -47,7 +47,7 @@ public class TaskManager {
             task.setId(taskId);
         }
         return taskId;
-    }
+    }                                       // POST/tasks/task Body{task} - done
 
     public void printAllTasks() {
         Map<Integer, Task> tasks = taskRepository.getTasks();
@@ -69,12 +69,12 @@ public class TaskManager {
 
     public Map<Integer, Task> getAllTasks() {
         return taskRepository.getTasks();
-    }
+    }       // GET/tasks/task - done
 
     public void clearAllTasks() {
         taskRepository.clearAllTasks();
         historyRepository.clear();
-    }
+    }                                                   // DELETE/tasks/task - done
 
     public Task getTaskById(int taskId) {
         if (taskRepository.getTasks().containsKey(taskId)) {
@@ -84,7 +84,7 @@ public class TaskManager {
         } else {
             throw new IllegalArgumentException("Такого ID в списке нет");
         }
-    }
+    }                                           // GET/tasks/task/{id} - done
 
     public void removeTaskById(int taskId) {
         if (taskRepository.getTasks().containsKey(taskId)) {
@@ -125,7 +125,7 @@ public class TaskManager {
             throw new IllegalArgumentException("Такого ID в списке нет");
         }
 
-    }
+    }                                        // DELETE/tasks/task/{id} - done
 
     public void updateTask(Task task, int taskId) {
 
@@ -166,7 +166,7 @@ public class TaskManager {
         } else {
             throw new IllegalArgumentException("Такого ID в списке нет");
         }
-    }
+    }                                 // PUT/tasks/task Body{task} - done
 
     public List<Integer> getSubtaskListByEpic(int epicId) {
 
@@ -186,7 +186,7 @@ public class TaskManager {
         } else {
             throw new IllegalArgumentException("Такого ID в списке нет");
         }
-    }
+    }                         // GET/tasks/subtasksListByEpic/{id} - done
 
     public void printHistory() {
         Collection<Task> viewedTasks = historyRepository.getHistory();
@@ -203,11 +203,11 @@ public class TaskManager {
 
     public Collection<Task> getHistory() {
         return historyRepository.getHistory();
-    }
+    }     // GET/tasks/history - done
 
     public Set<Task> getPrioritizedTasks() {
         return sortedByStartTimeTasks;
-    }
+    }                                        // GET/tasks/prioritizedTask - done
 
     public Integer getAmountOfStoredTasks() {
         return taskRepository.getTasks().size();
@@ -239,7 +239,7 @@ public class TaskManager {
         }
     }
 
-    public boolean canAddTask(Map<Integer, Task> tasks, Task task) {
+    private boolean canAddTask(Map<Integer, Task> tasks, Task task) {
 
         List<Task> tasksList = new ArrayList<>(tasks.values());
         return tasksList.stream()

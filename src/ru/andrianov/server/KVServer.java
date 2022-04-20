@@ -26,6 +26,7 @@ public class KVServer {
                 switch (h.getRequestMethod()) {
                     case "GET":
                         sendText(h, API_KEY);
+                        System.out.println("Ключ " + API_KEY + " зарегистрирован.");
                         break;
                     default:
                         System.out.println("/register ждёт GET-запрос, а получил " + h.getRequestMethod());
@@ -94,7 +95,6 @@ public class KVServer {
             } finally {
                 h.close();
             }
-            // TODO Добавьте получение значения по ключу
         });
     }
 
@@ -105,13 +105,18 @@ public class KVServer {
         server.start();
     }
 
+    public void stop() {
+        System.out.println("Останавливаем сервер на порту " + PORT);
+        server.stop(1);
+    }
+
     private String generateApiKey() {
         return "" + System.currentTimeMillis();
     }
 
     protected boolean hasAuth(HttpExchange h) {
         String rawQuery = h.getRequestURI().getRawQuery();
-        return rawQuery != null && (rawQuery.contains("API_KEY=" + API_KEY) || rawQuery.contains("API_KEY=DEBUG"));
+        return rawQuery != null && (rawQuery.contains("tasks_" + API_KEY) || rawQuery.contains("API_KEY=DEBUG") || rawQuery.contains("history_" + API_KEY));
     }
 
     protected String readText(HttpExchange h) throws IOException {

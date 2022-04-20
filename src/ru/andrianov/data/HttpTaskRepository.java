@@ -9,7 +9,7 @@ import java.util.Map;
 public class HttpTaskRepository implements TaskRepository {
 
     private final String url;
-    private String API_KEY;
+
     private final KVTaskClient kvTaskClient;
     private HashMap<Integer, Task> tasks;
     private Integer idCounter;
@@ -62,13 +62,5 @@ public class HttpTaskRepository implements TaskRepository {
         tasks.put(taskId, task);
         String json = gson.toJson(tasks);
         kvTaskClient.put("tasks", json);
-    }
-
-    public String getAPI_KEY() {
-        return API_KEY;
-    }
-
-    public void setAPI_KEY(String API_KEY) {
-        this.API_KEY = API_KEY;
     }
 }

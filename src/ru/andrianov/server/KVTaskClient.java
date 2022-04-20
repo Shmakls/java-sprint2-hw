@@ -19,10 +19,22 @@ public class KVTaskClient {
         key = register();
     }
 
-    public void put(String TypeKey, String json) {
+    public void put(String typeKey, String json) {
+        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+        String compositeKey = typeKey + "_" + key;
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
-                .POST()
+                .uri(URI.create(serverUrl + "/save/" + compositeKey))
+                .POST(body)
+                .build();
+
+        try {
+            client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -60,10 +72,13 @@ public class KVTaskClient {
         try {
             HttpResponse<String> httpResponse = client.send(httpRequest, handler);
             response = httpResponse.body();
+            System.out.println("Ключ " + response + " успешно получен!");
 
         } catch (IOException e) {
+            System.out.println("Ошибка IOException");
             e.printStackTrace();
         } catch (InterruptedException e) {
+            System.out.println("Ошибка InterruptedException");
             e.printStackTrace();
         }
         return response;

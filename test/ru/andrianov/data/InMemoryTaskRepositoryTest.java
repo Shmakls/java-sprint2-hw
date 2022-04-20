@@ -10,5 +10,4 @@ class InMemoryTaskRepositoryTest extends TaskRepositoryTest<InMemoryTaskReposito
     void beforeEach() {
         taskRepository = new InMemoryTaskRepository();
     }
-
 }
