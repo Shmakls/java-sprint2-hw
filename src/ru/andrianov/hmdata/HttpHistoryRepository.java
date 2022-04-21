@@ -1,6 +1,7 @@
 package ru.andrianov.hmdata;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import ru.andrianov.data.Task;
 import ru.andrianov.server.KVTaskClient;
 
@@ -16,13 +17,16 @@ public class HttpHistoryRepository implements HistoryRepository {
     private Map<Integer, Node> nodeWithId;
     private KVTaskClient kvTaskClient;
     Gson gson;
+    GsonBuilder gsonBuilder;
 
     public HttpHistoryRepository(String url) {
         this.url = url;
         viewedTasks = new HomeLinkedList();
         nodeWithId = new HashMap<>();
         kvTaskClient = new KVTaskClient(this.url);
-        gson = new Gson();
+        gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting().serializeNulls();
+        gson = gsonBuilder.create();
     }
 
     @Override

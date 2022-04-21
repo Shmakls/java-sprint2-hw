@@ -1,6 +1,7 @@
 package ru.andrianov.server;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -16,17 +17,21 @@ public class HttpTaskServer {
     private static final int PORT = 8080;
     private final TaskManager taskManager;
     private final HttpServer httpServer;
-    private Gson gson = new Gson();
+    private Gson gson;
+    private GsonBuilder gsonBuilder;
 
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.taskManager = taskManager;
+        gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting().serializeNulls();
+        gson = gsonBuilder.create();
         httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
         httpServer.createContext("/tasks/task", new TaskHandler(gson, taskManager));
         httpServer.createContext("/tasks/subtasksListByEpic", (h) -> {
             try {
                 switch (h.getRequestMethod()) {
                     case "GET":
-                        String getId = h.getRequestURI().getPath().substring("/subtasksListByEpic/".length());
+                        String getId = h.getRequestURI().getPath().substring("/tasks/subtasksListByEpic/".length());
                         if (getId.isEmpty()) {
                             System.out.println("EpicId пустой. EpicId указывается в пути: /subtasksListByEpic/{key}");
                             h.sendResponseHeaders(400, 0);
@@ -111,13 +116,14 @@ public class HttpTaskServer {
         try {
             switch (h.getRequestMethod()) {
                 case "GET":
-                    String getId = h.getRequestURI().getPath().substring("/tasks/task/".length());
+                    String getId = h.getRequestURI().getPath().substring("/tasks/task".length());
 
                     if (getId.isEmpty()) {
                         sendText(h, gson.toJson(taskManager.getAllTasks()));
                     } else {
                         try {
-                            sendText(h, gson.toJson(taskManager.getTaskById(Integer.parseInt(getId))));
+
+                            sendText(h, gson.toJson(taskManager.getTaskById(Integer.parseInt(getId.split("/")[1]))));
                         } catch (IllegalArgumentException e) {
                             System.out.println(e.getMessage());
                             h.sendResponseHeaders(400, 0);

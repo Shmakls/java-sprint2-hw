@@ -1,5 +1,7 @@
 package ru.andrianov.server;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +12,12 @@ import ru.andrianov.data.Status;
 import ru.andrianov.data.Subtask;
 import ru.andrianov.data.Task;
 
+import javax.annotation.processing.SupportedAnnotationTypes;
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -22,12 +29,17 @@ class HttpTaskServerTest {
 
     HttpTaskServer httpTaskServer;
     KVServer kvServer;
+    HttpClient client;
+    HttpResponse.BodyHandler<String> handler;
     TaskManager taskManager;
     Task task1;
     Task task2;
     Task epic1;
     Task subtask1;
     Task subtask2;
+
+    Gson gson;
+    GsonBuilder gsonBuilder;
 
     ZoneId zoneId = ZoneId.of("Europe/Moscow");
     Duration estimationTime = Duration.ofMinutes(15);
@@ -45,6 +57,10 @@ class HttpTaskServerTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting().serializeNulls();
+        gson = gsonBuilder.create();
 
         taskManager = Managers.getTaskManager();
         taskManager.clearAllTasks();
@@ -64,9 +80,13 @@ class HttpTaskServerTest {
 
         try {
             httpTaskServer = new HttpTaskServer(taskManager);
+            httpTaskServer.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        client = HttpClient.newHttpClient();
+        handler = HttpResponse.BodyHandlers.ofString();
     }
 
     @AfterEach
@@ -75,6 +95,183 @@ class HttpTaskServerTest {
         httpTaskServer.stop();
     }
 
+    private void addFiveTestTasksToTaskManager() {
+        taskManager.createNewTask(task1);
+        taskManager.createNewTask(task2);
+        taskManager.createNewTask(epic1);
+        taskManager.createNewTask(subtask1);
+        taskManager.createNewTask(subtask2);
+    }
 
+    @Test // test endpoint tasks/task
+    void shouldBeReturnAllTasks() {
+        String response = "";
+        addFiveTestTasksToTaskManager();
+
+        String testJson = gson.toJson(taskManager.getAllTasks());
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/tasks/task"))
+                .build();
+
+        try {
+            HttpResponse<String> httpResponse = client.send(httpRequest, handler);
+            response = httpResponse.body();
+            System.out.println("Список задач получен!");
+
+        } catch (IOException e) {
+            System.out.println("Ошибка IOException");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.out.println("Ошибка InterruptedException");
+            e.printStackTrace();
+        }
+
+        assertEquals(testJson, response, "Задачи не совпадают!");
+
+    }
+
+    @Test // test endpoint tasks/task/{id}
+    void shouldBeReturnTaskById() {
+        String response = "";
+        addFiveTestTasksToTaskManager();
+
+        String testJson = gson.toJson(taskManager.getTaskById(2));
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/tasks/task/2"))
+                .build();
+
+        try {
+            HttpResponse<String> httpResponse = client.send(httpRequest, handler);
+            response = httpResponse.body();
+            System.out.println("Задача получена!");
+
+        } catch (IOException e) {
+            System.out.println("Ошибка IOException");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.out.println("Ошибка InterruptedException");
+            e.printStackTrace();
+        }
+
+        assertEquals(testJson, response, "Задачи не совпадают!");
+    }
+
+    @Test // test endpoint tasks/history
+    void shouldBeReturnHistory() {
+        String response = "";
+        addFiveTestTasksToTaskManager();
+
+        Task testTask1 = taskManager.getTaskById(1);
+        Task testTask4 = taskManager.getTaskById(4);
+
+        String testJson = gson.toJson(taskManager.getHistory());
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/tasks/history"))
+                .build();
+
+        try {
+            HttpResponse<String> httpResponse = client.send(httpRequest, handler);
+            response = httpResponse.body();
+            System.out.println("История получена!");
+
+        } catch (IOException e) {
+            System.out.println("Ошибка IOException");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.out.println("Ошибка InterruptedException");
+            e.printStackTrace();
+        }
+
+        assertEquals(testJson, response, "Истории не совпадают!");
+    }
+
+    @Test // test endpoint tasks/prioritizedTask
+    void shouldBeReturnPrioritizedTask() {
+        String response = "";
+        addFiveTestTasksToTaskManager();
+
+        String testJson = gson.toJson(taskManager.getPrioritizedTasks());
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/tasks/prioritizedTask"))
+                .build();
+
+        try {
+            HttpResponse<String> httpResponse = client.send(httpRequest, handler);
+            response = httpResponse.body();
+            System.out.println("Приоритетные задачи получены");
+
+        } catch (IOException e) {
+            System.out.println("Ошибка IOException");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.out.println("Ошибка InterruptedException");
+            e.printStackTrace();
+        }
+
+        assertEquals(testJson, response, "Приоритетные списки не совпадают");
+    }
+
+    @Test // test endpoint tasks/subtasksListByEpic/{id}
+    void shouldBeReturnSubtasksListIdByEpicId() {
+        String response = "";
+        addFiveTestTasksToTaskManager();
+
+        String testJson = gson.toJson(taskManager.getSubtaskListByEpic(3));
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/tasks/subtasksListByEpic/3"))
+                .build();
+
+        try {
+            HttpResponse<String> httpResponse = client.send(httpRequest, handler);
+            response = httpResponse.body();
+            System.out.println("Список подзадач получен");
+
+        } catch (IOException e) {
+            System.out.println("Ошибка IOException");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.out.println("Ошибка InterruptedException");
+            e.printStackTrace();
+        }
+
+        assertEquals(testJson, response, "Списки подзадач не совпадают");
+    }
+
+    @Test // test endpoint /tasks/task Body{task}
+    void shouldBeCreateNewTask() {
+        String jsonTask1 = gson.toJson(task1);
+        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(jsonTask1);
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/tasks/task"))
+                .POST(body)
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(httpRequest, handler);
+
+        } catch (IOException e) {
+            System.out.println("Ошибка IOException");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.out.println("Ошибка InterruptedException");
+            e.printStackTrace();
+        }
+
+        String testJson = gson.toJson(taskManager.getTaskById(1));
+
+        assertEquals(testJson, jsonTask1, "Списки подзадач не совпадают");
+    }
 
 }

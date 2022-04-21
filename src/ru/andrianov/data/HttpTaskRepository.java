@@ -1,6 +1,7 @@
 package ru.andrianov.data;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import ru.andrianov.server.KVTaskClient;
 
 import java.util.HashMap;
@@ -14,13 +15,16 @@ public class HttpTaskRepository implements TaskRepository {
     private HashMap<Integer, Task> tasks;
     private Integer idCounter;
     Gson gson;
+    GsonBuilder gsonBuilder;
 
     public HttpTaskRepository(String url) {
         this.url = url;
         kvTaskClient = new KVTaskClient(this.url);
         tasks = new HashMap<>();
         idCounter = 0;
-        gson = new Gson();
+        gsonBuilder = new GsonBuilder();
+        gsonBuilder.setPrettyPrinting().serializeNulls();
+        gson = gsonBuilder.create();
     }
 
     @Override
