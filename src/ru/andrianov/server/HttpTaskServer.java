@@ -139,7 +139,9 @@ public class HttpTaskServer {
                         h.sendResponseHeaders(400, 0);
                         return;
                     }
-                    Task newTask = gson.fromJson(jsonNewTask, Task.class);
+
+
+                    Task newTask = gson.fromJson(jsonNewTask, Task.class); // https://habr.com/ru/company/naumen/blog/228279/
                     Integer newTaskId = taskManager.createNewTask(newTask);
                     System.out.println("Задача с ID " + newTaskId + " успешно создана!");
                     h.sendResponseHeaders(200, 0);

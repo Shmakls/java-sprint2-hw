@@ -256,6 +256,8 @@ class HttpTaskServerTest {
                 .uri(URI.create("http://localhost:8080/tasks/task"))
                 .POST(body)
                 .version(HttpClient.Version.HTTP_1_1)
+                .header("Content-Type", "application/json")
+                .header("Accept", "text/json")
                 .build();
 
         try {
