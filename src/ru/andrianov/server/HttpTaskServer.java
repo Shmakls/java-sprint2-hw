@@ -1,15 +1,17 @@
 package ru.andrianov.server;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import ru.andrianov.TaskManager;
+import ru.andrianov.common.MyGsonBuilder;
 import ru.andrianov.data.Task;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class HttpTaskServer {
@@ -22,9 +24,8 @@ public class HttpTaskServer {
 
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.taskManager = taskManager;
-        gsonBuilder = new GsonBuilder();
-        gsonBuilder.setPrettyPrinting().serializeNulls();
-        gson = gsonBuilder.create();
+
+        gson = MyGsonBuilder.build();
         httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
         httpServer.createContext("/tasks/task", new TaskHandler(gson, taskManager));
         httpServer.createContext("/tasks/subtasksListByEpic", (h) -> {
@@ -183,11 +184,5 @@ public class HttpTaskServer {
         }
 
         }
-
-
-
     }
-
-
-
 }

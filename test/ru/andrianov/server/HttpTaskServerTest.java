@@ -1,18 +1,16 @@
 package ru.andrianov.server;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.andrianov.Managers;
 import ru.andrianov.TaskManager;
+import ru.andrianov.common.MyGsonBuilder;
 import ru.andrianov.data.Epic;
 import ru.andrianov.data.Status;
 import ru.andrianov.data.Subtask;
 import ru.andrianov.data.Task;
-
-import javax.annotation.processing.SupportedAnnotationTypes;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -39,7 +37,6 @@ class HttpTaskServerTest {
     Task subtask2;
 
     Gson gson;
-    GsonBuilder gsonBuilder;
 
     ZoneId zoneId = ZoneId.of("Europe/Moscow");
     Duration estimationTime = Duration.ofMinutes(15);
@@ -58,9 +55,7 @@ class HttpTaskServerTest {
             e.printStackTrace();
         }
 
-        gsonBuilder = new GsonBuilder();
-        gsonBuilder.setPrettyPrinting().serializeNulls();
-        gson = gsonBuilder.create();
+        gson = MyGsonBuilder.build();
 
         taskManager = Managers.getTaskManager();
         taskManager.clearAllTasks();
@@ -249,7 +244,14 @@ class HttpTaskServerTest {
 
     @Test // test endpoint /tasks/task Body{task}
     void shouldBeCreateNewTask() {
+
         String jsonTask1 = gson.toJson(task1);
+
+        task1.setId(1);
+        task1.setType(ru.andrianov.data.Type.TASK);
+
+        String expectedJson = gson.toJson(task1);
+
         HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(jsonTask1);
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
@@ -271,9 +273,9 @@ class HttpTaskServerTest {
             e.printStackTrace();
         }
 
-        String testJson = gson.toJson(taskManager.getTaskById(1));
+        String actualJson = gson.toJson(taskManager.getTaskById(1));
 
-        assertEquals(testJson, jsonTask1, "Списки подзадач не совпадают");
+        assertEquals(expectedJson, actualJson, "Списки подзадач не совпадают");
     }
 
 }
