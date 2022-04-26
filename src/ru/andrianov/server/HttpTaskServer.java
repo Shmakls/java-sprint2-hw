@@ -6,12 +6,12 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import ru.andrianov.TaskManager;
 import ru.andrianov.common.MyGsonBuilder;
+import ru.andrianov.data.Epic;
+import ru.andrianov.data.Subtask;
 import ru.andrianov.data.Task;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.InetSocketAddress;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 public class HttpTaskServer {
@@ -141,8 +141,16 @@ public class HttpTaskServer {
                         return;
                     }
 
+                    Task newTask;
 
-                    Task newTask = gson.fromJson(jsonNewTask, Task.class); // https://habr.com/ru/company/naumen/blog/228279/
+                    if (jsonNewTask.contains("\"SUBTASK\"")) {
+                        newTask = gson.fromJson(jsonNewTask, Subtask.class);
+                    } else if (jsonNewTask.contains("\"EPIC\"")) {
+                        newTask = gson.fromJson(jsonNewTask, Epic.class);
+                    } else {
+                        newTask = gson.fromJson(jsonNewTask, Task.class);
+                    }
+
                     Integer newTaskId = taskManager.createNewTask(newTask);
                     System.out.println("Задача с ID " + newTaskId + " успешно создана!");
                     h.sendResponseHeaders(200, 0);
@@ -155,21 +163,31 @@ public class HttpTaskServer {
                         h.sendResponseHeaders(400, 0);
                         return;
                     }
-                    Task updateTask = gson.fromJson(jsonUpdateTask, Task.class);
+
+                    Task updateTask;
+
+                    if (jsonUpdateTask.contains("\"SUBTASK\"")) {
+                        updateTask = gson.fromJson(jsonUpdateTask, Subtask.class);
+                    } else if (jsonUpdateTask.contains("\"EPIC\"")) {
+                        updateTask = gson.fromJson(jsonUpdateTask, Epic.class);
+                    } else {
+                        updateTask = gson.fromJson(jsonUpdateTask, Task.class);
+                    }
+
                     taskManager.updateTask(updateTask, updateTask.getId());
                     System.out.println("Задача успешно обновлена!");
                     h.sendResponseHeaders(200, 0);
                     break;
 
                 case "DELETE":
-                    String deleteId = h.getRequestURI().getPath().substring("/task/".length());
+                    String deleteId = h.getRequestURI().getPath().substring("/tasks/task".length());
 
                     if (deleteId.isEmpty()) {
                         taskManager.clearAllTasks();
                         sendText(h, gson.toJson("Все задачи удалены!"));
                     } else {
-                        taskManager.removeTaskById(Integer.parseInt(deleteId));
-                        sendText(h, gson.toJson("Задача с ID " + Integer.parseInt(deleteId)) + " удалена!");
+                        taskManager.removeTaskById(Integer.parseInt(deleteId.split("/")[1]));
+                        sendText(h, gson.toJson("Задача с ID " + Integer.parseInt(deleteId.split("/")[1])) + " удалена!");
                     }
                     break;
 

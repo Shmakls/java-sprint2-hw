@@ -7,10 +7,8 @@ import org.junit.jupiter.api.Test;
 import ru.andrianov.Managers;
 import ru.andrianov.TaskManager;
 import ru.andrianov.common.MyGsonBuilder;
-import ru.andrianov.data.Epic;
-import ru.andrianov.data.Status;
-import ru.andrianov.data.Subtask;
-import ru.andrianov.data.Task;
+import ru.andrianov.data.*;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -98,7 +96,7 @@ class HttpTaskServerTest {
         taskManager.createNewTask(subtask2);
     }
 
-    @Test // test endpoint tasks/task
+    @Test // test endpoint GET tasks/task
     void shouldBeReturnAllTasks() {
         String response = "";
         addFiveTestTasksToTaskManager();
@@ -127,7 +125,7 @@ class HttpTaskServerTest {
 
     }
 
-    @Test // test endpoint tasks/task/{id}
+    @Test // test endpoint GET tasks/task/{id}
     void shouldBeReturnTaskById() {
         String response = "";
         addFiveTestTasksToTaskManager();
@@ -155,7 +153,7 @@ class HttpTaskServerTest {
         assertEquals(testJson, response, "Задачи не совпадают!");
     }
 
-    @Test // test endpoint tasks/history
+    @Test // test endpoint GET tasks/history
     void shouldBeReturnHistory() {
         String response = "";
         addFiveTestTasksToTaskManager();
@@ -186,7 +184,7 @@ class HttpTaskServerTest {
         assertEquals(testJson, response, "Истории не совпадают!");
     }
 
-    @Test // test endpoint tasks/prioritizedTask
+    @Test // test endpoint GET tasks/prioritizedTask
     void shouldBeReturnPrioritizedTask() {
         String response = "";
         addFiveTestTasksToTaskManager();
@@ -214,7 +212,7 @@ class HttpTaskServerTest {
         assertEquals(testJson, response, "Приоритетные списки не совпадают");
     }
 
-    @Test // test endpoint tasks/subtasksListByEpic/{id}
+    @Test // test endpoint GET tasks/subtasksListByEpic/{id}
     void shouldBeReturnSubtasksListIdByEpicId() {
         String response = "";
         addFiveTestTasksToTaskManager();
@@ -242,7 +240,7 @@ class HttpTaskServerTest {
         assertEquals(testJson, response, "Списки подзадач не совпадают");
     }
 
-    @Test // test endpoint /tasks/task Body{task}
+    @Test // test endpoint POST /tasks/task Body{task}
     void shouldBeCreateNewTask() {
 
         String jsonTask1 = gson.toJson(task1);
@@ -275,7 +273,107 @@ class HttpTaskServerTest {
 
         String actualJson = gson.toJson(taskManager.getTaskById(1));
 
-        assertEquals(expectedJson, actualJson, "Списки подзадач не совпадают");
+        assertEquals(expectedJson, actualJson, "Задачи не совпадают!");
+    }
+
+    @Test // test endpoint PUT /tasks/task Body{task}
+    void shouldBeUpdateTask() {
+        addFiveTestTasksToTaskManager();
+
+        Task updateSubtask1 = new Subtask("updateSubtask1",
+                "UpdateDescriptionSubtask1",
+                Status.DONE,
+                startTimeSubtask1.plusMinutes(90),
+                estimationTime, 3);
+        updateSubtask1.setId(4);
+        updateSubtask1.setType(Type.SUBTASK);
+
+        String expectedJson = gson.toJson(updateSubtask1);
+
+        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(expectedJson);
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/tasks/task"))
+                .PUT(body)
+                .version(HttpClient.Version.HTTP_1_1)
+                .header("Content-Type", "application/json")
+                .header("Accept", "text/json")
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(httpRequest, handler);
+
+        } catch (IOException e) {
+            System.out.println("Ошибка IOException");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.out.println("Ошибка InterruptedException");
+            e.printStackTrace();
+        }
+
+        String actualJson = gson.toJson(taskManager.getTaskById(4));
+
+        assertEquals(expectedJson, actualJson, "Задачи не совпадают!");
+
+    }
+
+    @Test // test endpoint DELETE /tasks/task
+    void shouldBeDeleteAllTasks() {
+        addFiveTestTasksToTaskManager();
+
+        Integer amountTasks = taskManager.getAmountOfStoredTasks();
+
+        assertEquals(5, amountTasks, "Количество задач не совпадает!");
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .DELETE()
+                .uri(URI.create("http://localhost:8080/tasks/task"))
+                .build();
+
+        try {
+            HttpResponse<String> httpResponse = client.send(httpRequest, handler);
+
+        } catch (IOException e) {
+            System.out.println("Ошибка IOException");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.out.println("Ошибка InterruptedException");
+            e.printStackTrace();
+        }
+
+        Integer actualAmountTask = taskManager.getAmountOfStoredTasks();
+
+        assertEquals(0, actualAmountTask, "Задачи не удалились!");
+
+    }
+
+    @Test // test endpoint DELETE /tasks/task/{id}
+    void shouldBeDeleteTaskById() {
+        addFiveTestTasksToTaskManager();
+
+        Integer amountTasks = taskManager.getAmountOfStoredTasks();
+
+        assertEquals(5, amountTasks, "Количество задач не совпадает!");
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .DELETE()
+                .uri(URI.create("http://localhost:8080/tasks/task/2"))
+                .build();
+
+        try {
+            HttpResponse<String> httpResponse = client.send(httpRequest, handler);
+
+        } catch (IOException e) {
+            System.out.println("Ошибка IOException");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            System.out.println("Ошибка InterruptedException");
+            e.printStackTrace();
+        }
+
+        Integer actualAmountTask = taskManager.getAmountOfStoredTasks();
+
+        assertEquals(4, actualAmountTask, "Количеств задач после удаления не совпадает!");
     }
 
 }
