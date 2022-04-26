@@ -45,13 +45,10 @@ class HttpTaskServerTest {
     ZonedDateTime startTimeSubtask2 = ZonedDateTime.of(localDateTime.plusMinutes(90), zoneId);
 
     @BeforeEach
-    void beforeEach() {
-        try {
-            kvServer = new KVServer();
-            kvServer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    void beforeEach() throws IOException {
+
+        kvServer = new KVServer();
+        kvServer.start();
 
         gson = MyGsonBuilder.build();
 
